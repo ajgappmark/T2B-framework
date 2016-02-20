@@ -21,5 +21,5 @@ I found a lot of code all over the web, so as soon as possible I'll add the refe
 Last but not least, many people inspired me but citing everyone will crush the net.
 
 ##Known Bugs
-1) slow transfer while down/up-loading throuth Tor (*this is why I created boxes*)
-2) ...let me know 
+ 1. slow transfer while down/up-loading throuth Tor (*this is why I created boxes*)
+ 2. ...let me know 
