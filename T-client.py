@@ -64,7 +64,7 @@ def SendTextCipher(info2):
 		sock.sendall(info)
 
 def RecvTextCipher():
-		l1 = sock.recv(4096)
+		l1 = sock.recv(size)
 		l = Decrypt(l1)
 		data = ""
 		while(l):
@@ -72,20 +72,20 @@ def RecvTextCipher():
 			if data.endswith(zero) == True :
 				break
 			else :
-				l = sock.recv(4096)
+				l = sock.recv(size)
 		endback = len(zero) + 32
 		CheckString(data[:-len(zero)])
 		return data[:-endback]
 
 def RecvIV():
-		l = sock.recv(4096)
+		l = sock.recv(size)
 		data = ""
 		while(l):
 			data += l
 			if data.endswith(zero) == True :
 				break
 			else :
-				l = sock.recv(4096)
+				l = sock.recv(size)
 		endback = len(zero) + 32
 		CheckString(data[:-len(zero)])
 		return data[:-endback]
@@ -112,13 +112,14 @@ def Decrypt(cipherData):
 
 zero = "zero"
 key = ',U\x10\xab\xf6\xc6D\x08\xa7\xb7\xa36\xd6\t\x12\xaa'
-#host = 'localhost'
-name = 'client000-crypt'
+name = 'client000-crypt' 
 port = 5555
 size = 4096
 sock = socks.socksocket()
+#if tor is not running, just comment out the next row
 sock.setproxy(socks.PROXY_TYPE_SOCKS5,"127.0.0.1",9050)
-host = "3pnzzdpq7aj6s6b6.onion"
+#and change this next one
+host = "3pnzz**********.onion" 
 sock.connect((host,port))
 iv = RecvIV()
 cipher = AES.new(key, AES.MODE_CBC, iv)
