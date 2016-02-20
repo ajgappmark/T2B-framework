@@ -4,7 +4,7 @@ from colored import fg, bg, attr
 from subprocess import check_output
 from Crypto.Cipher import AES
 
-pid = subprocess.Popen(args=["xterm","-e","./net.py"]).pid
+pid = subprocess.Popen(args=["xterm","-e","./net.py"]).pid # numb. of real time connected client
 
 class PKCS7Encoder():
     class InvalidBlockSizeError(Exception):
