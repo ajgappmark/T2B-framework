@@ -6,9 +6,9 @@ so this is my first project, I'm not so skilled so please be patient for my bugs
 ##Synopsis
 This project aim to create a composite network of connected hosts. The main categories are:
 
-+bots 
-+headquarter
-+*boxes*
+ + bots 
+ + headquarter
+ + *boxes*
 
 ##Motivation
 Started looking for one... ended up writing one.
