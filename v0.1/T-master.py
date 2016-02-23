@@ -5,7 +5,7 @@ from subprocess import check_output
 from Crypto.Cipher import AES
 
 pid1 = subprocess.Popen(args=["xterm","-e","./net.py"]).pid
-pid2 = subprocess.Popen(args=["xterm","-e","python -m  SimpleHTTPServer 7777"]).pid
+pid2 = subprocess.Popen(args=["xterm","-e","python -m  SimpleHTTPServer 7777"]).pid #or use box, for this version no difference
 
 class PKCS7Encoder():
     class InvalidBlockSizeError(Exception):
@@ -99,7 +99,7 @@ class Server:
 		self.size = 4096
 		self.server = None
 		self.threads = []
-		self.box = "http://bnc2z5zsm2n4ybbx.onion:7777/"
+		self.box = "http://BoxAddressHere.onion:PortHere/"
 
 
 	def open_socket(self):
@@ -147,7 +147,7 @@ class Client(threading.Thread):
 		self.client = client
 		self.address = address
 		self.size = 4096
-		self.box = "http://bnc2z5zsm2n4ybbx.onion:7777/"
+		self.box = "http://BoxAddressHere.onion:PortHere/"
 		threading.current_thread()
 	
 	def RecvTextCipher(self):
@@ -190,11 +190,11 @@ class Client(threading.Thread):
 					running = 0
 				if inText.split(" ")[2] == "download":
 					print ("%s------["+ str(threading.current_thread()).split(" ")[2][:len(str(threading.current_thread()).split(" ")[2])-2] + "]---"+ str(self.address) + " == " +inText.split(" ")[0] +" [download]%s") % (fg(202), attr(0))
-					#if os.path.isfile(inText.split(" ")[3]) == True:
-					self.SendTextCipher(self.box + inText.split(" ")[3])
-					print "url: " + self.box + inText.split(" ")[3]
-					#else:
-					#	self.SendTextCipher("no-file")
+					if os.path.isfile(inText.split(" ")[3]) == True:
+						self.SendTextCipher(self.box + inText.split(" ")[3])
+						print "url: " + self.box + inText.split(" ")[3]
+					else:
+						self.SendTextCipher("no-file")
 				else:
 					self.SendTextCipher(inText)
 					print ("%s---[" + str(threading.current_thread()).split(" ")[2][:len(str(threading.current_thread()).split(" ")[2])-2] + "]---" + str(self.address) + " == " + inText + "%s") % (fg(45), attr(0))
