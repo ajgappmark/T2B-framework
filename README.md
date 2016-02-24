@@ -9,7 +9,7 @@ This project aim to create a composite network of connected hosts. The main cate
 
  + bots (T-client)
  + headquarter (TM-server)
- + *boxes* (soon)
+ + *boxes* (version =< 0.1)
 
 This will be not just a *classic* botnet, this will be bulletproof network.
 Trust&safe connections, the power of **AES** and **HMAC** give data-level encryption.
