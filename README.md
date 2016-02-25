@@ -1,4 +1,4 @@
-# T-pybot
+# T2B-framework
 
 Hi @Pielco11 here,
 so this is my first project, I'm not so skilled so please be patient for my bugs.
@@ -8,7 +8,7 @@ Merge the power of Python with the anonymity of Tor.
 This project aim to create a composite network of connected hosts. The main categories are:
 
  + bots (T-client)
- + headquarter (TM-server)
+ + headquarters (TM-server)
  + *boxes* (version =< 0.1)
 
 This will be not just a *classic* botnet, this will be bulletproof network.
