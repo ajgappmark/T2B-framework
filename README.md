@@ -29,6 +29,7 @@ Last but not least, many people inspired me but citing everyone will crush the n
 
 ##Known Bugs
 - [ ] slow transfer while down/up-loading throuth Tor (*this is why I created boxes*)
+- [ ] using a master key 
 - [ ] ...let me know 
 
 ##Abuse
