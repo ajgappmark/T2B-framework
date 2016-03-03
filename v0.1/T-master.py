@@ -66,9 +66,9 @@ def ExecIN(cmd):
 		print out
 
 def CheckHash(check):
-		HM = hmac.new(key, check[:-32], hashlib.sha256)
+		HM = hmac.new(SignKey, check[:-32], hashlib.sha256)
 		if hmac.compare_digest(HM.digest(), check[-32:]) == True:
-			pas = 1 + 5
+			pass
 		else:
 			print "error"
 			
@@ -84,8 +84,15 @@ def Decrypt(cipherData):
 		unpadded_data = encoder.decode(de_chiper_t)
 		return unpadded_data
 
+def GenSignKey(key, salt, iterations):
+		d_key = hashlib.pbkdf2_hmac('sha512', key, salt , iterations)
+		return d_key
+
 iv = os.urandom(16)
-key = ',U\x10\xab\xf6\xc6D\x08\xa7\xb7\xa36\xd6\t\x12\xaa'
+key = '\x86\x82\xb8\x9f\x9d[\xc6\x0c\xc6\x16bZ\x0c\x02I\x14W\xe4\x02mi\xee\x17\xea9\r\x96\xb6\x14\xfd\\\xfd'
+salt = '\xd0\x1a\xa9\xa5\x94\xe4\xd0K\xca\xfb\xb6\x81\x05d\xa9d[N\xc8E\xfeN\x14\x98]=E\xe9%9F\xbd\x12(\xbb\x07\x1b\x1bOw'
+iterations = 100000
+SignKey = GenSignKey(key, salt, iterations)
 zero = "zero"
 cipher = AES.new(key, AES.MODE_CBC, iv)
 print "%s---------------------------%s" % (fg(46), attr(0))
@@ -167,13 +174,13 @@ class Client(threading.Thread):
 		return data[:-endback]
 	
 	def SendTextCipher(self,info2):
-		HM1 = hmac.new(key, info2, hashlib.sha256)
+		HM1 = hmac.new(SignKey, info2, hashlib.sha256)
 		info1 = info2 + HM1.digest() + zero
 		info = Encrypt(info1)
 		self.client.sendall(info)
 	
 	def SendTextClear(self,info):
-		HM2 = hmac.new(key, info, hashlib.sha256)
+		HM2 = hmac.new(SignKey, info, hashlib.sha256)
 		info1 = info + HM2.digest() + zero
 		self.client.sendall(info1)
 
