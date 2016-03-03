@@ -53,12 +53,12 @@ def Download():
 		file_input.close()
 
 def SendText(info):
-		HM1 = hmac.new(key, info, hashlib.sha256)
+		HM1 = hmac.new(Signkey, info, hashlib.sha256)
 		info1 = info + HM1.digest() + zero
 		sock.sendall(info1)
 
 def SendTextCipher(info2):
-		HM2 = hmac.new(key, info2, hashlib.sha256)
+		HM2 = hmac.new(SignKey, info2, hashlib.sha256)
 		info1 = info2 + HM2.digest() + zero
 		info = Encrypt(info1)
 		sock.sendall(info)
@@ -91,8 +91,7 @@ def RecvIV():
 		return data[:-endback]
 
 def CheckString(check):
-		gntkrjngrkt = hmac.new(key, check[:-32], hashlib.sha256)
-		HM3 = hmac.new(key, check[:-32], hashlib.sha256)
+		HM3 = hmac.new(SignKey, check[:-32], hashlib.sha256)
 		if hmac.compare_digest(HM3.digest(), check[-32:]) == True:
 			pas = 1
 		else:
@@ -139,8 +138,15 @@ def URL(url):
 	f.close()
 	print ""
 
+def GenSignKey(key, salt, iterations):
+		d_key = hashlib.pbkdf2_hmac('sha512', key, salt , iterations)
+		return d_key
+
 zero = "zero"
-key = ',U\x10\xab\xf6\xc6D\x08\xa7\xb7\xa36\xd6\t\x12\xaa'
+key = '\x86\x82\xb8\x9f\x9d[\xc6\x0c\xc6\x16bZ\x0c\x02I\x14W\xe4\x02mi\xee\x17\xea9\r\x96\xb6\x14\xfd\\\xfd'
+salt = '\xd0\x1a\xa9\xa5\x94\xe4\xd0K\xca\xfb\xb6\x81\x05d\xa9d[N\xc8E\xfeN\x14\x98]=E\xe9%9F\xbd\x12(\xbb\x07\x1b\x1bOw'
+iterations = 100000
+SignKey = GenSignKey(key, salt, iterations)
 #host = 'localhost'
 name = 'client000-crypt'
 port = 5555
