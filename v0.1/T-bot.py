@@ -93,7 +93,7 @@ def RecvIV():
 def CheckString(check):
 		HM3 = hmac.new(SignKey, check[:-32], hashlib.sha256)
 		if hmac.compare_digest(HM3.digest(), check[-32:]) == True:
-			pas = 1
+			pass
 		else:
 			sys.exit(1)
 
