@@ -11,9 +11,7 @@ This project aim to create a composite network of connected hosts. The main cate
  + headquarters (TM-server)
  + *boxes* (version =< 0.1)
 
-This will be not just a *classic* botnet, this will be bulletproof network.
-Trust&safe connections, the power of **AES** and **HMAC** give data-level encryption.
-A distribuited series of headquarters makes more complicted and difficult to track down the net.
+Trust&safe connections with **AES** and **HMAC**.
 
 This is just the beginning so you can't expect nothing special.
 
@@ -29,7 +27,7 @@ Last but not least, many people inspired me but citing everyone will crush the n
 
 ##Known Bugs
 - [ ] slow transfer while down/up-loading throuth Tor (*this is why I created boxes*)
-- [ ] using a master key 
+- [-] using a master key (solved, just for beta)
 - [ ] ...let me know 
 
 ##Abuse
