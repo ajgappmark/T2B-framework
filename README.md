@@ -36,3 +36,6 @@ Last but not least, many people inspired me but citing everyone will crush the n
 
 ##Abuse
 I'm **NOT** responsible for damages did by the abuse of this software.
+
+##Contact me
+You can find me on Twitter or you can add me on Ricochet ricochet:cuu6hyttxg66ew6n.
