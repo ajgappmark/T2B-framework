@@ -13,24 +13,40 @@ def SendData(inText):
 
 def DownloadFILE(fileName):
     fileDOWN = open(fileName, 'wa')
+    fileSize = int(RecvData())
+    print "[>>>]Downloading: %s Bytes: %s" % (fileName, fileSize)
+    FSD = 0
     while 1:
         temp = RecvData()
         if temp == 'CUF':
             break
         else: 
+            FSD += len(temp)
             fileDOWN.write(temp)
+            status = r"%10d  [%3.2f%%]" % (FSD, FSD * 100. / fileSize)
+            status = status + chr(8)*(len(status)+1)
+            print status,
     fileDOWN.close()
-    SendData("SDF") #Server Download Finished 
+    print ""
+    SendData("SDF")
 
 def UploadFILE(fileName):
     fileUP = open(fileName, 'rb')
+    fileSize = os.path.getsize(fileName)
+    print "[>>>]Uploading: %s Bytes: %s" % (fileName, fileSize)
+    FSD = 0
     while 1:
         tempData = fileUP.read()
         if tempData == '':
             break
         else:
+            FSD += len(tempData)
             SendData(tempData)
+            status = r"%10d  [%3.2f%%]" % (FSD, FSD * 100. / fileSize)
+            status = status + chr(8)*(len(status)+1)
+            print status,
     fileUP.close()
+    print ""
     SendData("SUF") #Server Upload Finished
 
 while True:
