@@ -6,8 +6,32 @@ bindsocket.listen(5)
 
 def RecvData():
     temp = connstream.read()
-    #edit to handle "big" data
     return temp
+
+def SendData(inText):
+    connstream.write(inText)
+
+def DownloadFILE(fileName):
+    fileDOWN = open(fileName, 'wa')
+    while 1:
+        temp = RecvData()
+        if temp == 'CUF':
+            break
+        else: 
+            fileDOWN.write(temp)
+    fileDOWN.close()
+    SendData("SDF") #Server Download Finished 
+
+def UploadFILE(fileName):
+    fileUP = open(fileName, 'rb')
+    while 1:
+        tempData = fileUP.read()
+        if tempData == '':
+            break
+        else:
+            SendData(tempData)
+    fileUP.close()
+    SendData("SUF") #Server Upload Finished
 
 while True:
     newsocket, fromaddr = bindsocket.accept()
@@ -17,9 +41,17 @@ while True:
                                  keyfile="private_key.key")
     while True:
         inText = raw_input('[input] ')
-        connstream.write(inText)
-        outTT = RecvData()
-        print '[outText] ' + outTT
+        if inText.startswith("download"):
+            SendData(inText)
+            DownloadFILE(inText.split(" ")[1])
+        elif inText.startswith("upload"):
+            SendData(inText)
+            UploadFILE(inText.split(" ")[1])
+            chunk = RecvData()
+        else:
+            connstream.write(inText)
+            outTT = RecvData()
+            print '[outText] ' + outTT
         # make a function to handle exit
         #connstream.shutdown(socket.SHUT_RDWR)
         #connstream.close()
