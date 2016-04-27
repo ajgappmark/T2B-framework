@@ -1,4 +1,4 @@
-import socket, ssl, pprint, socks, sys, os
+import socket, ssl, pprint, socks, sys, os, hmac, hashlib
 
 host = '3pnzzdpq7aj6s6b6.onion'
 
@@ -9,6 +9,21 @@ def RecvData():
 
 def SendData(inText):
     ssl_sock.write(inText)
+
+def CheckHash(fileName,fileHashHEX):
+    with open(fileName, 'rb') as inFile:
+        buf = inFile.read()
+        hasher.update(buf)
+    if hmac.compare_digest(hasher.hexdigest(),fileHashHEX) == True:
+        pass
+    else:
+        print "Warning!"
+
+def CalcHash(fileName):
+    with open(fileName, 'rb') as inFile:
+        buf = inFile.read()
+        hasher.update(buf)
+    return hasher.hexdigest()
 
 def UploadFILE(fileName):
     fileUP = open(fileName, 'rb')
