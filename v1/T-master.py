@@ -5,6 +5,8 @@ bindsocket = socket.socket()
 bindsocket.bind(('', 5555))
 bindsocket.listen(5)
 
+pid1 = subprocess.Popen(args=["xterm","-e","./net.py"]).pid
+
 def RecvData():
     temp = connstream.read()
     return temp
