@@ -27,9 +27,9 @@ def CalcHash(fileName):
         hasher.update(buf)
     return hasher.hexdigest()
 
-def EXEC(cmd):
-    p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-    return p.stdout.read
+def ExecIN(cmd):
+    out = check_output(cmd, shell=True)
+    print out
 
 def DownloadFILE(fileName):
     fileDOWN = open(fileName, 'wa')
@@ -89,9 +89,6 @@ while True:
             connstream.shutdown(socket.SHUT_RDWR)
             connstream.close()
             break
-        elif inText.startswith("exec"):
-            outEXEC = EXEC(inText.split(":")[1])
-            SendData(outEXEC)
         else:
             connstream.write(inText)
             outTT = RecvData()
