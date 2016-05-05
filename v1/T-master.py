@@ -118,7 +118,7 @@ while True:
         cType = RecvData()
         print ("%s----[new-client] " + str(fromaddr) + " :: " + cType + "%s") % (fg(202),attr(0))
         while True:
-            inText = raw_input(colored.blue('<T2B')+':'+colored.yellow(cType+'> '))
+            inText = raw_input(colored.white('<T2B:')+colored.yellow(cType+'> '))
             if inText.startswith("download"):
                 SendData(inText)
                 DownloadFILE(inText.split(" ")[1])
