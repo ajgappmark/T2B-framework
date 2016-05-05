@@ -1,6 +1,6 @@
 import socket, ssl, os, sys, time, hashlib, hmac, geoip2.database
 from colored import fg, bg, attr
-from subprocess import check_output
+from subprocess import Popen, PIPE, STDOUT
 from clint.textui import colored
 
 host = '3pnzzdpq7aj6s6b6.onion'
