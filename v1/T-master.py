@@ -2,7 +2,7 @@ import socket, ssl, os, sys, time, hashlib, hmac, geoip2.database
 from colored import fg, bg, attr
 from subprocess import Popen, PIPE, STDOUT
 from clint.textui import colored
-
+test = "test,testing"
 host = '3pnzzdpq7aj6s6b6.onion'
 hasher = hashlib.sha256()
 try:
@@ -71,7 +71,7 @@ def DownloadFILE(fileName):
         temp = RecvData()
         if temp == 'CUF':
             break
-        else: 
+        else:
             FSD += len(temp)
             fileDOWN.write(temp)
             status = r"%10d  [%3.2f%%]" % (FSD, FSD * 100. / fileSize)
