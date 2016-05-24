@@ -3,7 +3,15 @@
 Hi @Pielco11 here,
 so this is my first project, I'm not so skilled so please be patient for my bugs.
 
-##News 21/04/16
+##News
+*24/05/16:
+ Added protect function, now you can encrypt & decrypt every file that you downloaded (in both directions) so you can keep safe your secrets (soon I'll add, obviously, HMAC)
+ 
+*05/05/16:
+Added s-wifi that let you to scan the remote Wifi network;
+Added info that let you retrieve some information about the target, like IP address and other OS information;
+
+* 21/04/16:
 Created v1 because reinvent the wheel is helpful but not useful.
 So added **TLS**/**SSL** support to make a sense of real security. At the time of writing I'm using ssl std lib., but if there is a why that I shouldn't use it please tell me (this is not my field).
 
