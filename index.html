@@ -30,6 +30,15 @@
 <a id="news" class="anchor" href="#news" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>News</h2>
 
 <ul>
+<li>29/05/16:
+
+<ol>
+<li>Upgraded progress bar, thanks to <a href="https://github.com/tqdm/tqdm">tqdm</a>
+</li>
+<li>Added <strong>HMAC</strong> (coming for transfered files)</li>
+<li>Added PBKDF to sign the hash of the files</li>
+</ol>
+</li>
 <li>24/05/16:
 
 <ol>
@@ -58,11 +67,10 @@ So added <strong>TLS</strong>/<strong>SSL</strong> support to make a sense of re
 
 <p>This project aims to administrate a network of compromised hosts, keeping your identity private (thanks to Tor) and your connections secure (thanks to TLS/SSL). For many times botnets get stuck because the main servers became compromised, but this framework will let you keep yours C&amp;C safe and alive (well, this will do its best).</p>
 
-<ol>
-<li>T-master</li>
-<li>T-client</li>
-<li>Firewall (soon)</li>
-</ol>
+<p>Another <em>problem</em> is that you let unauthorized users to reach your server, even without the cert or whatever. If I now your hostname/IP/whatever I can reach you. But <strong>Tor</strong> has the <strong>solution</strong> (that, as far as I know, clearnet hasn't). I'm referring to <a href="https://www.torproject.org/docs/tor-manual.html.en#HiddenServiceAuthorizeClient">HiddenServiceAuthorizeClient</a> and <a href="https://www.torproject.org/docs/tor-manual.html.en#HidServAuth">HidServAuth</a>, if you set these properly, see <a href="https://www.axs.org/tor/ssh_access_over_Tor.html">here</a>,
+your Master server will be more stealth than ever and it <strong>won't</strong> suffer ddos attack, or any other type of it. Because this is a feature of Tor, of the protocol and not of the software (T2B-framework).
+So from now on, you'll setup a "<em>firewall</em>" between you (Master) and your bots. The new firewall will be just a node from you and your bots, that will filter "legit" client from attackers.
+But for this we all will wait. News are coming, changes are coming.</p>
 
 <h2>
 <a id="motivation" class="anchor" href="#motivation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Motivation</h2>
@@ -86,6 +94,7 @@ So added <strong>TLS</strong>/<strong>SSL</strong> support to make a sense of re
 <li>
 <a href="https://www.openssl.org/">OpenSSL</a> to <a href="https://msol.io/blog/tech/create-a-self-signed-ssl-certificate-with-openssl/">generate Private Key and Cert</a>
 </li>
+<li><a href="https://github.com/tqdm/tqdm">tqdm</a></li>
 </ul>
 
 <h2>
@@ -111,12 +120,10 @@ Last but not least, many people inspired me but citing everyone will crush the n
 
 <ul>
 <li>wifi card in s-scan (see code..)</li>
+<li>progress bar when uploading files, is not so progress 
+##Abuse
+I'm <strong>NOT</strong> responsible for damages did by the abuse of this software.</li>
 </ul>
-
-<h2>
-<a id="abuse" class="anchor" href="#abuse" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Abuse</h2>
-
-<p>I'm <strong>NOT</strong> responsible for damages did by the abuse of this software.</p>
 
 <h2>
 <a id="contact-me" class="anchor" href="#contact-me" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Contact me</h2>
