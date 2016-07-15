@@ -132,12 +132,6 @@ while True:
             elif inText.startswith("!"):
 		        ExecIN(inText.split("!")[1])
             elif inText.startswith('s-wifi'):
-                print "[*] Please choose a card, exec if/ip-config"
-                wconf = raw_input("exec -> ")
-                SendData("exec:"+ wconf)
-                print ("")
-                outEXEC = RecvData()
-                print (outEXEC)
                 card = raw_input("[*] Enter wifi card name: ")
                 SendData("ScanWIFI :" + card)
                 report = RecvData()
