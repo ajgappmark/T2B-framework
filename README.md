@@ -19,7 +19,8 @@ Created v1 because reinvent the wheel is helpful but not useful.
 So added **TLS**/**SSL** support to make a sense of real security. At the time of writing I'm using ssl std lib., but if there is a why that I shouldn't use it please tell me.
 
 ##Screen-shot
-![Screenshot](https://s32.postimg.org/cgvk00mo4/screen_mod.jpg)
+![Screenshot1](https://s32.postimg.org/cgvk00mo4/screen_mod.jpg)
+![Screenshot2](https://s31.postimg.org/j7tnxj4xn/Schermata_da_2016_07_15_00_20_12.png)
 
 ##Description
 This project aims to administrate a network of compromised hosts, keeping your identity private (thanks to Tor) and your connections secure (thanks to TLS/SSL). For many times botnets get stuck because the main servers became compromised, but this framework will let you keep yours C&C safe and alive (well, this will do its best).
