@@ -67,7 +67,7 @@ def LinuxAutoStart():
 def WindowsAutoStart():
     try:
         name = inspect.getfile(inspect.currentframe());
-        EXEC("REG ADD \"HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run\" /V \"My App\" /t REG_SZ /F /D \"C:\MyAppPath\""+name)
+        EXEC("REG ADD \"HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run\" /V \"My App\" /t REG_SZ /F /D "+os.path.dirname(os.path.abspath(__file__))+name)
         EXEC("attrib +h" + name)
         status = "ok"
     except:
