@@ -4,6 +4,11 @@
 [![Build Status](https://travis-ci.org/pielco11/T2B-framework.svg?branch=master)](https://travis-ci.org/pielco11/T2B-framework)
 
 #News
+* 21/07/16:
+   * Added `VirusTotal check`: once the program is started, itself check is recognised as malware in the Database of [VirusTotal](https://www.virustotal.com/). Note that if the file was never scanned before, VT reports an "error". **You have to register on VT to get an api key**, [here](https://www.virustotal.com/en/documentation/public-api/) for more infos.
+   * Added `HOOK` function: *still in dev*. Thanks to @JeffHoogland for [pyxhook](https://github.com/JeffHoogland/pyxhook), at the time of writing you can check if hook is running or not, and if you want stop it.
+   * Added `certificate auto extractor`: if the certificate.pem is not present in the directory, it'll extract form the code.
+   * Fixed `s-wifi`: Thanks to [netifaces](https://pypi.python.org/pypi/netifaces) now you can check what netifaces are present and than choose the wifi card, no more if/ip-config.
 * 14/07/16:
    * Added `LinuxAutoStart`: this will add a hidden .desktop in ~/.config/autostart/, and hidden in StarUp applications;
    * Added `WindowsAutoStart`: this will add a new reg key for the file, and set it hidden (_actually not tested at the time of writing_)
@@ -69,4 +74,4 @@ Last but not least, many people inspired me but citing everyone will crush the n
 I'm **NOT** responsible for damages did by the abuse of this software.
 
 #Contact me
-You can find me on Twitter or you can add me on [Ricochet](https://ricochet.im/) `ricochet:cuu6hyttxg66ew6n`.
+You can find me on [Twitter](https://twitter.com/Pielco11) or you can add me on [Ricochet](https://ricochet.im/) `ricochet:cuu6hyttxg66ew6n`.
