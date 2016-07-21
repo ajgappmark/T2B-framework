@@ -55,8 +55,7 @@ Started looking for one... ended up writing one.
 * Generate a S.S.C. (Self-Signed-Certificate) with Openssl (you can use the priv key of the HS)
 * Modify the variables of the S.C. as you like (host, port, etc..)
 * Install GEOIP2, and download the database
-* Install colored and clint
-* Install wifi to scan the remote wifi area
+* run `pip install -r requirements`
 
 #Contributors
 I found a lot of code all over the web, so as soon as possible I'll add the reference to the main authors.
@@ -70,4 +69,4 @@ Last but not least, many people inspired me but citing everyone will crush the n
 I'm **NOT** responsible for damages did by the abuse of this software.
 
 #Contact me
-You can find me on Twitter or you can add me on [Ricochet](https://ricochet.im/) ricochet:cuu6hyttxg66ew6n.
+You can find me on Twitter or you can add me on [Ricochet](https://ricochet.im/) `ricochet:cuu6hyttxg66ew6n`.
