@@ -5,6 +5,7 @@
 
 #News
 * 21/07/16:
+   * Corrected `HOOK`: now the script is handled with threads, no more external scripts or whatever. At the moment `HOOK` works only in Linux (that's why LinuxHOOKER), working on for windows.
    * Added `RunMe.sh`: automated tool to setup the HS, certificate and all the necessary
    * Added `VirusTotal check`: once the program is started, itself check is recognised as malware in the Database of [VirusTotal](https://www.virustotal.com/). Note that if the file was never scanned before, VT reports an "error". **You have to register on VT to get an api key**, [here](https://www.virustotal.com/en/documentation/public-api/) for more infos.
    * Added `HOOK` function: *still in dev*. Thanks to [JeffHoogland](https://github.com/JeffHoogland) for [pyxhook](https://github.com/JeffHoogland/pyxhook), at the time of writing you can check if hook is running or not, and if you want stop it.
