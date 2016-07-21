@@ -1,5 +1,5 @@
 import socket, ssl, pprint, socks, os, sys, hashlib, hmac, platform, simplejson
-import inspect, urllib2, os.path, base64, getpass, zipfile, urllib, netifaces
+import inspect, urllib2, os.path, base64, getpass, urllib, netifaces
 from colored import fg, bg, attr
 from subprocess import Popen, PIPE, STDOUT
 from wifi import Cell, Scheme
@@ -42,13 +42,13 @@ with open(os.path.basename(__file__) , "rb") as thisFile:
     thisHash = HF.hexdigest()
 
 # to get your apikey, log in virustotal
-#parameters = {"resource": thisHash, "apikey": "YOUR VIRUS-TOTAL API KEY HERE"}
-#response = urllib2.urlopen(urllib2.Request(VTurl, urllib.urlencode(parameters)))
-#jReport = response.read()
+parameters = {"resource": thisHash, "apikey": "YOUR VIRUS-TOTAL API KEY HERE"}
+response = urllib2.urlopen(urllib2.Request(VTurl, urllib.urlencode(parameters)))
+jReport = response.read()
 
 # extract some data
-#response_dict = simplejson.loads(jReport)
-#rPositives = response_dict.get("positives",{})
+response_dict = simplejson.loads(jReport)
+rPositives = response_dict.get("positives",{})
 rPositives = 0
 # check VT stauts
 if str(rPositives) != "{}":
