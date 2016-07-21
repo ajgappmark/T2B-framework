@@ -69,7 +69,6 @@ I found a lot of code all over the web, so as soon as possible I'll add the refe
 Last but not least, many people inspired me but citing everyone will crush the net.
 
 #Known Bugs
-- [x] wifi card in s-wifi (fixed with netifaces)
 - [ ] progress bar when uploading files, is not so progress
 
 #Abuse
