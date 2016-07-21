@@ -5,18 +5,18 @@
 
 #News
 * 14/07/16:
-   1. Added `LinuxAutoStart`: this will add a hidden .desktop in ~/.config/autostart/, and hidden in StarUp applications;
-   2. Added `WindowsAutoStart`: this will add a new reg key for the file, and set it hidden (_actually not tested at the time of writing_)
-   3. Added `FirefoxThief`: this will dump `key3.db`,`logins.json` and `cert8.db` from the specified directory. So then you can extract the passwd.
+   * Added `LinuxAutoStart`: this will add a hidden .desktop in ~/.config/autostart/, and hidden in StarUp applications;
+   * Added `WindowsAutoStart`: this will add a new reg key for the file, and set it hidden (_actually not tested at the time of writing_)
+   * Added `FirefoxThief`: this will dump `key3.db`,`logins.json` and `cert8.db` from the specified directory. So then you can extract the passwd.
 * 29/05/16:
-   1. Upgraded progress bar, thanks to [tqdm](https://github.com/tqdm/tqdm)
-   2. Added **HMAC** (coming for transfered files)
-   3. Added PBKDF to sign the hash of the files
+   * Upgraded progress bar, thanks to [tqdm](https://github.com/tqdm/tqdm)
+   * Added **HMAC** (coming for transfered files)
+   * Added PBKDF to sign the hash of the files
 * 24/05/16:
-   1. Added `protect` function, now you can encrypt & decrypt every file that you downloaded (in both directions) so you can keep safe your secrets (soon I'll add, obviously, **HMAC**)
+   * Added `protect` function, now you can encrypt & decrypt every file that you downloaded (in both directions) so you can keep safe your secrets (soon I'll add, obviously, **HMAC**)
 * 05/05/16:
-   1. Added `s-wifi` that let you to scan the remote Wifi network;
-   2. Added `info` that let you retrieve some information about the target, like IP address and other OS information;
+   * Added `s-wifi` that let you to scan the remote Wifi network;
+   * Added `info` that let you retrieve some information about the target, like IP address and other OS information;
 * 21/04/16:
 Created v1 because reinvent the wheel is helpful but not useful.
 So added **TLS**/**SSL** support to make a sense of real security. At the time of writing I'm using ssl std lib., but if there is a why that I shouldn't use it please tell me.
@@ -47,6 +47,8 @@ Started looking for one... ended up writing one.
 * [OpenSSL](https://www.openssl.org/) to [generate Private Key and Cert](https://msol.io/blog/tech/create-a-self-signed-ssl-certificate-with-openssl/)
 * [tqdm](https://github.com/tqdm/tqdm)
 * getpass
+* [simplejson](https://pypi.python.org/pypi/simplejson)
+* [netifaces](https://pypi.python.org/pypi/netifaces)
 
 #Installation
 * Install Tor and initialize a HS
