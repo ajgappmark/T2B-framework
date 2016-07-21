@@ -9,12 +9,12 @@ host = 'hcjczulezpxxfw2n.onion'
 hasher = hashlib.sha256()
 # loading geoip2
 try:
-    reader = geoip2.database.Reader('/home/user/Scaricati/GeoLite2-City.mmdb')
+    reader = geoip2.database.Reader('/path/to/GeoLite2-City.mmdb')
 except:
     print ("Can not load GEOIP2-Database")
 
 # init
-#pid1 = subprocess.Popen(args=["xterm","-e","python net.py"]).pid
+#pid1 = subprocess.Popen(args=["xterm","-e","python net.py"]).pid uncommented during dev
 
 print ("%s---------------------------%s" % (fg(46), attr(0)))
 print ("%s[Starting server]%s" % (fg(46), attr(0)))
@@ -111,10 +111,7 @@ while True:
         print ("%s...waiting...%s" % (fg(46), attr(0)))
         newsocket, fromaddr = bindsocket.accept()
         try:
-            connstream = ssl.wrap_socket(newsocket,
-                                 server_side=True,
-                                 certfile="certificate.pem",
-                                 keyfile="private_key")
+            connstream = ssl.wrap_socket(newsocket, server_side=True, certfile="certificate.pem", keyfile="private_key")
         except ssl.SSLError:
             print ("%s%s!!!WARNING!!! BAD CLIENT (or other SSL problem)%s" % (fg(9),attr(1),attr(0)))
             break
