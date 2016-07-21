@@ -44,6 +44,8 @@ Started looking for one... ended up writing one.
 * [OpenSSL](https://www.openssl.org/) to [generate Private Key and Cert](https://msol.io/blog/tech/create-a-self-signed-ssl-certificate-with-openssl/)
 * [tqdm](https://github.com/tqdm/tqdm)
 * getpass
+* [netifaces](https://github.com/raphdg/netifaces)
+* urllib, urllib2, simplejson
 
 ##Installation
 * Install Tor and initialize a HS
@@ -59,7 +61,7 @@ Last but not least, many people inspired me but citing everyone will crush the n
 
 ##Known Bugs
 * wifi card in s-scan (see code..)
-* progress bar when uploading files, is not so progress 
+* progress bar when uploading files, is not so progress
 
 ##Abuse
 I'm **NOT** responsible for damages did by the abuse of this software.

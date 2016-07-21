@@ -42,13 +42,13 @@ with open(os.path.basename(__file__) , "rb") as thisFile:
     thisHash = HF.hexdigest()
 
 # to get your apikey, log in virustotal
-parameters = {"resource": thisHash, "apikey": "d94a59a2050391cf84f417f827769b622812f6ad59b8f50efd788f6de8d20341"}
-response = urllib2.urlopen(urllib2.Request(VTurl, urllib.urlencode(parameters)))
-jReport = response.read()
+#parameters = {"resource": thisHash, "apikey": "YOUR VIRUS-TOTAL API KEY HERE"}
+#response = urllib2.urlopen(urllib2.Request(VTurl, urllib.urlencode(parameters)))
+#jReport = response.read()
 
 # extract some data
-response_dict = simplejson.loads(jReport)
-rPositives = response_dict.get("positives",{})
+#response_dict = simplejson.loads(jReport)
+#rPositives = response_dict.get("positives",{})
 rPositives = 0
 # check VT stauts
 if str(rPositives) != "{}":
