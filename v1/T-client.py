@@ -1,5 +1,5 @@
 import socket, ssl, pprint, socks, os, sys, hashlib, hmac, platform, simplejson
-import inspect, urllib2, os.path, base64, getpass, zipfile, urllib, netifaces
+import inspect, urllib2, os.path, base64, getpass, urllib, netifaces
 from colored import fg, bg, attr
 from subprocess import Popen, PIPE, STDOUT
 from wifi import Cell, Scheme
