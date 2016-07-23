@@ -4,9 +4,9 @@
 [![Build Status](https://travis-ci.org/pielco11/T2B-framework.svg?branch=master)](https://travis-ci.org/pielco11/T2B-framework)
 
 #TODO
-- [] correct compatibility with windows when executing commands
-- [] correct list files, change directory and reg key
-- [] try/except for importing libs
+- [ ] Correct compatibility with windows when executing commands
+- [ ] Correct list files, change directory and reg key
+- [ ] Try/Except for importing libs
 
 #News
 * 21/07/16:
