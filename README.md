@@ -3,6 +3,11 @@
 ##Status
 [![Build Status](https://travis-ci.org/pielco11/T2B-framework.svg?branch=master)](https://travis-ci.org/pielco11/T2B-framework)
 
+#TODO
+- [] correct compatibility with windows when executing commands
+- [] correct list files, change directory and reg key
+- [] try/except for importing libs
+
 #News
 * 21/07/16:
    * Corrected `HOOK`: now the script is handled with threads, no more external scripts or whatever. At the moment `HOOK` works only in Linux (that's why LinuxHOOKER), working on for windows.
