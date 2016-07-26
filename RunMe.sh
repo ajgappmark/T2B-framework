@@ -4,12 +4,12 @@ echo "Updating & Upgrading..."
 #apt-get update 2>&1 >/dev/null && apt-get upgrade -y 2>&1 >/dev/null
 #apt-get dist-upgrade -y 2>&1 >/dev/null
 echo "Installing pip..."
-apt-get install python-pip -y 2>&1 >/dev/null
+apt-get install python-pip -y
 echo "#######################"
 echo "[I]nstall OpenSSL from repository or [D]ownload the source? [i/d]"
 read choose
 if [ "$choose" == "i" ]; then
-	apt-get install openssl -y
+	sudo apt-get install openssl -y
 elif [ "$choose" == "d" -a "$choose" != "i" ]; then
 	wget https://www.openssl.org/source/openssl-1.0.2h.tar.gz
 	wget https://www.openssl.org/source/openssl-1.0.2h.tar.gz.sha256
@@ -37,39 +37,39 @@ read RportHS
 echo "Type the virtual port of the HS: "
 read VportHS
 if [ "$typeOfService" == "d" ]; then
-	echo "HiddenServiceDir " + $directoryHS >> /etc/tor/torrc
-	echo "HiddenServicePort " + RportHS + " 127.0.0.1 " + VportHS
+	echo "HiddenServiceDir "$directoryHS >> /etc/tor/torrc
+	echo "HiddenServicePort "$RportHS" 127.0.0.1:"$VportHS
 	echo "Now run tor!"
-	echo "Finished... closing"
-	exit 0
 elif [ "$typeOfService" == "b" ]; then
 	echo "Type an username: "
 	read username
 	echo "HiddenServiceDir " + $directoryHS >> /etc/tor/torrc
-        echo "HiddenServicePort " + RportHS + " 127.0.0.1 " + VportHS
+        echo "HiddenServicePort "$RportHS" 127.0.0.1:"$VportHS
 	echo "HiddenServiceAuthorizeClient basic " + $username
 	echo "Generated authorization data can be found in the hostname file."
  	echo "Clients need to put this authorization data in their configuration file using HidServAuth. "
         echo "Now run tor!"
-        echo "Finished... closing"
-        exit 0
 else
 	echo "Type an username: "
         read username
-        echo "HiddenServiceDir " + $directoryHS >> /etc/tor/torrc
-        echo "HiddenServicePort " + RportHS + " 127.0.0.1 " + VportHS
-        echo "HiddenServiceAuthorizeClient stealth " + $username
-        echo "Generated authorization data can be found in the hostname file. Clients need to put this authorization data in their configuration file using$
+        echo "HiddenServiceDir "$directoryHS >> /etc/tor/torrc
+        echo "HiddenServicePort "$RportHS" 127.0.0.1:"$VportHS >> /etc/tor/torrc
+        echo "HiddenServiceAuthorizeClient stealth "$username >> /etc/tor/torrc
+        echo "Generated authorization data can be found in the hostname file."
         echo "Now run tor!"
-        echo "Finished... closing"
-        exit 0
 fi
 echo "#######################"
-echo "Setting up Certificate..."
-$privKeyLoc = $directoryHS + private_key
-openssl req -new -sha256 -key $privKeyLoc -out csr.csr
-$csrLoc = $directoryHS + "csr.csr"
-openssl req -x509 -sha256 -days 365 -key $privKeyLoc -in $csrLoc -out certificate.pem
-echo "Move certificate.pem to the HS directory"
-echo "Finished... closing"
-exit 0
+echo "Run tor in a terminal"
+echo "Is tor running? [y/n]"
+read stat
+if [ "$stat" == "y" ]; then
+	echo "Setting up Certificate..."
+	openssl req -new -sha256 -key "$directoryHS""private_key"  -out "csr.csr"
+	openssl req -x509 -sha256 -days 365 -key "$directoryHS""private_key" -in "csr.csr" -out "certificate.pem"
+	echo "Move certificate.pem to the HS directory"
+	mv certificate.pem $directoryHS
+	chown user "$directoryHS""certificate.pem" 
+	echo "Finished... closing"
+else
+	echo "Error, closing..."
+fi
