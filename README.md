@@ -6,9 +6,12 @@
 #TODO
 - [ ] Correct compatibility with windows when executing commands
 - [ ] Correct list files, change directory and reg key
-- [ ] Try/Except for importing libs
+- [-] Try/Except for importing libs (solved, using specific script)
 
 #News
+* 27/07/16:
+   * Introcuted v2: many changes have come, added a lot of nice function (keylogging, extracting passwd from Firefox ...)
+   * For a matter of compatibility I decided to write specific code for specific platforms (introducing Linux-Client, Windows-Client and Mac-Client)
 * 21/07/16:
    * Corrected `HOOK`: now the script is handled with threads, no more external scripts or whatever. At the moment `HOOK` works only in Linux (that's why LinuxHOOKER), working on for windows.
    * Added `RunMe.sh`: automated tool to setup the HS, certificate and all the necessary
@@ -49,7 +52,7 @@ But for this we all will wait. News are coming, changes are coming.
 Started looking for one... ended up writing one.
 
 #Requirements
-* Linux/OS X (Windows not tested)
+* Linux, Mac or Windows (not completely tested tested)
 * Python 2.7
 * [Tor](https://www.torproject.org/) and a HS.
 * [Clint: Python Command-line Application Tools](https://github.com/kennethreitz/clint)
@@ -60,7 +63,9 @@ Started looking for one... ended up writing one.
 * [tqdm](https://github.com/tqdm/tqdm)
 * getpass
 * [simplejson](https://pypi.python.org/pypi/simplejson)
-* [netifaces](https://pypi.python.org/pypi/netifaces)
+* [netifaces](https://pypi.python.org/pypi/netifaces) (for Linux and Mac wifi)
+* [PyWiWi](https://github.com/6e726d/PyWiWi) (for Windows wifi)
+
 
 #Installation
 * Install Tor and initialize a HS
@@ -68,6 +73,7 @@ Started looking for one... ended up writing one.
 * Modify the variables of the S.C. as you like (host, port, etc..)
 * Install GEOIP2, and download the database
 * run `pip install -r requirements`
+* Install external (github) dependencies
 
 #Contributors
 I found a lot of code all over the web, so as soon as possible I'll add the reference to the main authors.
