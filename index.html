@@ -41,6 +41,13 @@
 <a id="news" class="anchor" href="#news" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>News</h1>
 
 <ul>
+<li>27/07/16:
+
+<ul>
+<li>Introcuted v2: many changes have come, added a lot of nice function (keylogging, extracting passwd from Firefox ...)</li>
+<li>For a matter of compatibility I decided to write specific code for specific platforms (introducing Linux-Client, Windows-Client and Mac-Client)</li>
+</ul>
+</li>
 <li>21/07/16:
 
 <ul>
@@ -112,7 +119,7 @@ But for this we all will wait. News are coming, changes are coming.</p>
 <a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h1>
 
 <ul>
-<li>Linux/OS X (Windows not tested)</li>
+<li>Linux, Mac or Windows (not completely tested tested)</li>
 <li>Python 2.7</li>
 <li>
 <a href="https://www.torproject.org/">Tor</a> and a HS.</li>
@@ -128,7 +135,10 @@ But for this we all will wait. News are coming, changes are coming.</p>
 <li><a href="https://github.com/tqdm/tqdm">tqdm</a></li>
 <li>getpass</li>
 <li><a href="https://pypi.python.org/pypi/simplejson">simplejson</a></li>
-<li><a href="https://pypi.python.org/pypi/netifaces">netifaces</a></li>
+<li>
+<a href="https://pypi.python.org/pypi/netifaces">netifaces</a> (for Linux and Mac wifi)</li>
+<li>
+<a href="https://github.com/6e726d/PyWiWi">PyWiWi</a> (for Windows wifi)</li>
 </ul>
 
 <h1>
@@ -141,6 +151,7 @@ But for this we all will wait. News are coming, changes are coming.</p>
 <li>Install GEOIP2, and download the database</li>
 <li>run <code>pip install -r requirements</code>
 </li>
+<li>Install external (github) dependencies</li>
 </ul>
 
 <h1>
@@ -153,7 +164,7 @@ Last but not least, many people inspired me but citing everyone will crush the n
 <a id="known-bugs" class="anchor" href="#known-bugs" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Known Bugs</h1>
 
 <ul>
-<li>progress bar when uploading files, is not so progress</li>
+<li>[ ] progress bar when uploading files, is not so progress</li>
 </ul>
 
 <h1>
