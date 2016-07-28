@@ -6,4 +6,3 @@ tqdm
 simplejson
 netifaces
 comtypes
-pyhook
