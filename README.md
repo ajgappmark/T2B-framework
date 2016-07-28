@@ -5,7 +5,7 @@
 
 #TODO
 - [ ] Correct compatibility with windows when executing commands
-- [ ] Correct list files, change directory and reg key
+- [x] Correct list files, change directory and reg key (a half, coming pass `filename`)
 - [x] Try/Except for importing libs (solved, using specific script)
 
 #News
