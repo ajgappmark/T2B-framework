@@ -20,7 +20,7 @@
     <header>
       <div class="inner">
         <h1>T2B-framework</h1>
-        <h2>Cross-Platform Post Exploitation Toolkit</h2>
+        <h2>Tor-Based-Botnet framework</h2>
         <a href="https://github.com/pielco11/T2B-framework" class="button"><small>View project on</small> GitHub</a>
       </div>
     </header>
@@ -41,6 +41,12 @@
 <a id="news" class="anchor" href="#news" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>News</h1>
 
 <ul>
+<li>28/07/16:
+
+<ul>
+<li>Added windows hook that works like on Linux (working on for Mac)</li>
+</ul>
+</li>
 <li>27/07/16:
 
 <ul>
@@ -139,6 +145,10 @@ But for this we all will wait. News are coming, changes are coming.</p>
 <a href="https://pypi.python.org/pypi/netifaces">netifaces</a> (for Linux and Mac wifi)</li>
 <li>
 <a href="https://github.com/6e726d/PyWiWi">PyWiWi</a> (for Windows wifi)</li>
+<li>
+<a href="https://pypi.python.org/pypi/pyHook">pyHook</a> (for Windows hook)</li>
+<li>
+<a href="https://sourceforge.net/projects/pywin32/files/">pywin32</a> (for Windows hook)</li>
 </ul>
 
 <h1>
@@ -164,7 +174,8 @@ Last but not least, many people inspired me but citing everyone will crush the n
 <a id="known-bugs" class="anchor" href="#known-bugs" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Known Bugs</h1>
 
 <ul>
-<li>[ ] progress bar when uploading files, is not so progress</li>
+<li>[ ] Progress bar when uploading files, is not so progress</li>
+<li>[ ] When you execute <code>FirefoxThief</code>, from the downloaded data you can extract only the <em>new</em> logins. I mean, if the target sync passwd/cookie/etc.. with the Firefox account, you can extract <strong>only</strong> the logins creds since that sync. The old creds can't be extracted (at the time of writing, looking for the solution)</li>
 </ul>
 
 <h1>
