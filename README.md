@@ -9,6 +9,8 @@
 - [x] Try/Except for importing libs (solved, using specific script)
 
 #News
+* 28/07/16:
+   * Added windows hook that works like on Linux (working on for Mac)
 * 27/07/16:
    * Introcuted v2: many changes have come, added a lot of nice function (keylogging, extracting passwd from Firefox ...)
    * For a matter of compatibility I decided to write specific code for specific platforms (introducing Linux-Client, Windows-Client and Mac-Client)
