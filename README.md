@@ -80,7 +80,8 @@ I found a lot of code all over the web, so as soon as possible I'll add the refe
 Last but not least, many people inspired me but citing everyone will crush the net.
 
 #Known Bugs
-- [ ] progress bar when uploading files, is not so progress
+- [ ] Progress bar when uploading files, is not so progress
+- [ ] When you execute `FirefoxThief`, from the downloaded data you can extract only the *new* logins. I mean, if the target sync passwd/cookie/etc.. with the Firefox account, you can extract **only** the logins creds since that sync. The old creds can't be extracted (at the time of writing, looking for the solution) 
 
 #Abuse
 I'm **NOT** responsible for damages did by the abuse of this software.
