@@ -65,6 +65,8 @@ Started looking for one... ended up writing one.
 * [simplejson](https://pypi.python.org/pypi/simplejson)
 * [netifaces](https://pypi.python.org/pypi/netifaces) (for Linux and Mac wifi)
 * [PyWiWi](https://github.com/6e726d/PyWiWi) (for Windows wifi)
+* [pyHook](https://pypi.python.org/pypi/pyHook) (for Windows hook)
+* [pywin32](https://sourceforge.net/projects/pywin32/files/) (for Windows hook)
 
 
 #Installation
@@ -81,7 +83,7 @@ Last but not least, many people inspired me but citing everyone will crush the n
 
 #Known Bugs
 - [ ] Progress bar when uploading files, is not so progress
-- [ ] When you execute `FirefoxThief`, from the downloaded data you can extract only the *new* logins. I mean, if the target sync passwd/cookie/etc.. with the Firefox account, you can extract **only** the logins creds since that sync. The old creds can't be extracted (at the time of writing, looking for the solution) 
+- [ ] When you execute `FirefoxThief`, from the downloaded data you can extract only the *new* logins. I mean, if the target sync passwd/cookie/etc.. with the Firefox account, you can extract **only** the logins creds since that sync. The old creds can't be extracted (at the time of writing, looking for the solution)
 
 #Abuse
 I'm **NOT** responsible for damages did by the abuse of this software.
