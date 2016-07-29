@@ -9,6 +9,8 @@
 - [x] Try/Except for importing libs (solved, using specific script)
 
 #News
+* 29/07/16:
+   * Added `DownHTTP` function to download file from given url
 * 28/07/16:
    * Added windows hook that works like on Linux (working on for Mac)
 * 27/07/16:
