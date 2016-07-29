@@ -144,6 +144,16 @@ while True:
                     while report != "ScanWIFI-finished":
                         print (("%s|--- " + report+"%s") % (fg(6),attr(0)))
                         report = RecvData()
+            elif inText == "mapMe":
+                SendData("get-inferfaces")
+                print (("%s"+RecvData()+"%s") % (fg(6),attr(0)))
+                card = raw_input("[*] Enter wifi card name (type none for no card): ")
+                if card == "none":
+                    print colored.red("mapMe stopped")
+                else:
+                    SendData("mapMe:" + card)
+                mapped = RecvData()
+                print colored.cyan(mapped)
             elif inText == "info":
                 SendData("info")
                 infos = RecvData()
