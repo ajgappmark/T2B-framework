@@ -9,6 +9,8 @@
 - [x] Try/Except for importing libs (solved, using specific script)
 
 #News
+* 30/07/16:
+   * Added `mapMe` function, now you locate the target as Google do. You've to setup a Google Maps Api Key, more info [here](https://developers.google.com/maps/documentation/geolocation/intro). Yes, you've some limits but 2500 requests per day is a nice rate (VT has 4 per day). At the moment of writing it's not tested on Windows/Mac.
 * 29/07/16:
    * Added `DownHTTP` function to download file from given url
 * 28/07/16:
