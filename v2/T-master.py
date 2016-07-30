@@ -153,7 +153,10 @@ while True:
                 else:
                     SendData("mapMe:" + card)
                 mapped = RecvData()
-                print colored.cyan(mapped)
+                if mapped.startswith("Error"):
+                    print colored.red(mapped)
+                else:
+                    print colored.cyan(mapped)
             elif inText == "info":
                 SendData("info")
                 infos = RecvData()
@@ -236,6 +239,7 @@ while True:
                 outEXEC = RecvData()
                 print (outEXEC)
             elif inText.startswith("downhttp"):
+                SendData(inText)
                 httpReturn = RecvData()
                 if httpReturn.startswith("Error"):
                     print colored.red(httpReturn)
