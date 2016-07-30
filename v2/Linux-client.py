@@ -123,26 +123,24 @@ else:
 
 ################################ Google Maps APIs
 def MapsWIFI(card):
-    req = urllib2.Request("https://www.googleapis.com/geolocation/v1/geolocate?key=")# YOUR GOOGLE API KEY HERE
+    req = urllib2.Request("https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyAYNpMfeibwnaa1vUlMLHF4qTxJ8NVjTmI")# YOUR GOOGLE API KEY HERE
     wifiCell = Cell.all(card)
-    jWifi = """
-            {
-             "wifiAccessPoints": [
-            """
+    jWifi = "{\n \"wifiAccessPoints\": [\n"
     for i in range(0,len(wifiCell)):
-        jWifi+="{\n\"macAddress\": "+'\"'+str(wifiCell[i].address)+'\"\n,'
-        jWifi+='\"'+"signalToNoiseRatio\": "+str(wifiCell[i].signal)+'\n,'
-        jWifi+='\"'+"channel\": "+'\"'+str(wifiCell[i].channel)+'\n,'
-        jWifi+='\"'+"age\": 0\n"
-    jWifi = jWifi[:-1]
-    jWifi+=" ]\n}"
+        jWifi+="  {\n   \"macAddress\": "+'\"'+str(wifiCell[i].address)+'\",\n'
+        jWifi+='   \"'+"channel\": "+str(wifiCell[i].channel)+'\n  },\n'
+    jWifi = jWifi[:-2]
+    jWifi+="\n ]\n}"
+    print jWifi
     req.add_header("Content-Type", "application/json")
-    jWifiReport = urllib2.urlopen(req,simplejson.dumps(jWifi)).read()
+    jWifiReport = urllib2.urlopen(req, jWifi).read()
+    print jWifiReport
+    APdetected = str(len(wifiCell))
     mapsDict = simplejson.loads(jWifiReport)
     location = str(mapsDict.get("location",{}))[1:-1]
     accuracy = "Accuracy: "+str(mapsDict.get("accuracy",{}))[1:-1]
-    mapMe = location.split(",")[0]+"\n"+location.split(",")[1][1:]
-    return mapMe + "\n" + accuracy
+    mapMe = "|---"+location.split(",")[0]+"\n|---"+location.split(",")[1][1:]+"\n|---" + accuracy+"\n|---AP detected: " + APdetected
+    return mapMe
 
 
 
