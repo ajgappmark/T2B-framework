@@ -3,6 +3,9 @@
 ##Status
 [![Build Status](https://travis-ci.org/pielco11/T2B-framework.svg?branch=master)](https://travis-ci.org/pielco11/T2B-framework)
 
+##Attention 
+In windows-client the cert is not required because when you compile and deliver it, it can't extract the cert file (because... I don't know, permissions error)
+
 #TODO
 - [ ] Correct compatibility with windows when executing commands
 - [x] Correct list files, change directory and reg key (a half, coming pass `filename`)
