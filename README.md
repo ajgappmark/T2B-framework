@@ -3,15 +3,20 @@
 ##Status
 [![Build Status](https://travis-ci.org/pielco11/T2B-framework.svg?branch=master)](https://travis-ci.org/pielco11/T2B-framework)
 
+##Bugs
+Everything is almost under development, so please write to me for any of it
+
 ##Attention 
-In windows-client the cert is not required because when you compile and deliver it, it can't extract the cert file (because... I don't know, permissions error)
+In windows-client the cert is not required because when you compile and deliver it, it can't extract the cert file because (and at the moment of writing I don't know why) it will run in `C:\Windows\System32` instead of `C:\Path\to\file.exe`.
 
 #TODO
-- [ ] Correct compatibility with windows when executing commands
-- [x] Correct list files, change directory and reg key (a half, coming pass `filename`)
-- [x] Try/Except for importing libs (solved, using specific script)
+- [ ] Correct change directory 
+- [x] Reg key (you need to put the file name in the variable)
 
 #News
+* 28/08/16:
+   * Fixed Reg key: thanks to [ajinabraham](https://github.com/ajinabraham/Xenotix-Python-Keylogger/blob/master/xenotix_python_logger.py)
+   * Added Hide Window: thanks to [ajinabraham](https://github.com/ajinabraham/Xenotix-Python-Keylogger/blob/master/xenotix_python_logger.py)
 * 30/07/16:
    * Added `mapMe` function, now you locate the target as Google does. **You've to setup a Google Maps Api Key**, more info [here](https://developers.google.com/maps/documentation/geolocation/intro). Yes, you've some limits but 2500 requests per day is a nice rate (VT has 4 per day). At the moment of writing it's not tested on Windows/Mac.
 * 29/07/16:
