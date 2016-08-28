@@ -37,14 +37,41 @@
 
 <p><a href="https://travis-ci.org/pielco11/T2B-framework"><img src="https://travis-ci.org/pielco11/T2B-framework.svg?branch=master" alt="Build Status"></a></p>
 
+<h2>
+<a id="bugs" class="anchor" href="#bugs" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Bugs</h2>
+
+<p>Everything is almost under development, so please write to me for any of it</p>
+
+<h2>
+<a id="attention" class="anchor" href="#attention" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Attention</h2>
+
+<p>In windows-client the cert is not required because when you compile and deliver it, it can't extract the cert file because (and at the moment of writing I don't know why) it will run in <code>C:\Windows\System32</code> instead of <code>C:\Path\to\file.exe</code>.</p>
+
+<h1>
+<a id="todo" class="anchor" href="#todo" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>TODO</h1>
+
+<ul>
+<li>Correct change directory </li>
+<li>Reg key (you need to put the file name in the variable)</li>
+</ul>
+
 <h1>
 <a id="news" class="anchor" href="#news" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>News</h1>
 
 <ul>
+<li>28/08/16:
+
+<ul>
+<li>Fixed Reg key: thanks to <a href="https://github.com/ajinabraham/Xenotix-Python-Keylogger/blob/master/xenotix_python_logger.py">ajinabraham</a>
+</li>
+<li>Added Hide Window: thanks to <a href="https://github.com/ajinabraham/Xenotix-Python-Keylogger/blob/master/xenotix_python_logger.py">ajinabraham</a>
+</li>
+</ul>
+</li>
 <li>30/07/16:
 
 <ul>
-<li>Added <code>mapMe</code> function, now you locate the target as Google does. You've to setup a Google Maps Api Key, more info <a href="https://developers.google.com/maps/documentation/geolocation/intro">here</a>. Yes, you've some limits but 2500 requests per day is a nice rate (VT has 4 per day). At the moment of writing it's not tested on Windows/Mac.</li>
+<li>Added <code>mapMe</code> function, now you locate the target as Google does. <strong>You've to setup a Google Maps Api Key</strong>, more info <a href="https://developers.google.com/maps/documentation/geolocation/intro">here</a>. Yes, you've some limits but 2500 requests per day is a nice rate (VT has 4 per day). At the moment of writing it's not tested on Windows/Mac.</li>
 </ul>
 </li>
 <li>29/07/16:
