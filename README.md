@@ -14,6 +14,10 @@ In windows-client the cert is not required because when you compile and deliver 
 - [x] Reg key (you need to put the file name in the variable)
 
 #News
+* 12/10/16:
+   * Added v3: now you can handle and choose multiple clients
+* 11/10/16:
+   * Added ASCII-ART
 * 28/08/16:
    * Fixed Reg key: thanks to [ajinabraham](https://github.com/ajinabraham/Xenotix-Python-Keylogger/blob/master/xenotix_python_logger.py)
    * Added Hide Window: thanks to [ajinabraham](https://github.com/ajinabraham/Xenotix-Python-Keylogger/blob/master/xenotix_python_logger.py)
