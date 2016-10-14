@@ -6,3 +6,5 @@ tqdm
 simplejson
 netifaces
 comtypes
+pysocks
+pycrypto
