@@ -66,7 +66,7 @@ def DigGeoIp(ip):
     response = reader.city(ip)
     country = response.country.name
     city = response.city.name
-    print ("|-- " + ip + " " + city + " " + country)
+    print ("|--- " + ip + " " + city + " " + country)
 
 def CheckHash(fileName,fileHashHEX):
     with open(fileName, 'rb') as inFile:
@@ -135,7 +135,7 @@ def PrintListClients():
         try:
             SendData(sockClients[listClients.index(i)],"alive")
             stat = RecvData(sockClients[listClients.index(i)])
-            print str(listClients.index(i))+" < "+colored.yellow(str(i)+" :: "+stat.split("::")[0])+" ::"+colored.green(stat.split("::")[1])
+            print str(listClients.index(i))+" < "+colored.yellow(str(i)+" :: "+stat)
             print "-"*79
             continue
         except socket.error:

