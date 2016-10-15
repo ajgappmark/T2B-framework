@@ -211,11 +211,11 @@ while True:
                     print colored.red("mapMe stopped")
                 else:
                     SendData(sockClients[numb],"mapMe:"+card+":AIzaSyDpDfMrucSghsQ90Xf0NltpA0wcbQewZnQ")
-                mapped = RecvData(sockClients[numb])
-                if mapped.startswith("Error"):
-                    print colored.red(mapped)
-                else:
-                    print colored.cyan(mapped)
+                    mapped = RecvData(sockClients[numb])
+                    if mapped.startswith("Error"):
+                        print colored.red(mapped)
+                    else:
+                        print colored.cyan(mapped)
             elif inText == "info":
                 SendData(sockClients[numb],"info:d94a59a2050391cf84f417f827769b622812f6ad59b8f50efd788f6de8d20341")
                 infos = RecvData(sockClients[numb])
