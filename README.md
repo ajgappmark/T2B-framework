@@ -107,4 +107,4 @@ Last but not least, many people inspired me but citing everyone will crush the n
 I'm **NOT** responsible for damages did by the abuse of this software.
 
 #Contact me
-You can find me on [Twitter](https://twitter.com/Pielco11) or you can add me on [Ricochet](https://ricochet.im/) `ricochet:cuu6hyttxg66ew6n`.
+You can find me on [Twitter](https://twitter.com/Pielco11) or you can add me on [Ricochet](https://ricochet.im/) `ricochet:wlunm45q5vsytytf`.
