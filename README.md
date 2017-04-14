@@ -1,23 +1,23 @@
 > Merge the power of Python with the anonymity of Tor.
 
-#Status
+## Status
 
 [![Build Status](https://travis-ci.org/pielco11/T2B-framework.svg?branch=master)](https://travis-ci.org/pielco11/T2B-framework)
 
-##Bugs
+## Bugs
 
 Everything is almost under development, so please write to me for any of it
 
-##Attention 
+## Attention 
 
 In windows-client the cert is not required because when you compile and deliver it, it can't extract the cert file because (and at the moment of writing I don't know why) it will run in `C:\Windows\System32` instead of `C:\Path\to\file.exe`.
 
-#TODO
+# TODO
 
 - [ ] Correct change directory 
 - [x] Reg key (you need to put the file name in the variable)
 
-#News
+# News
 * 14/04/17:
    * Added `evade std sandbox`: thanks to [Markacho](https://stackoverflow.com/questions/165495/detecting-mouse-clicks-in-windows-using-python), now the program will wait for left click and then proceed
 * 12/10/16:
@@ -60,11 +60,11 @@ In windows-client the cert is not required because when you compile and deliver 
 Created v1 because reinvent the wheel is helpful but not useful.
 So added **TLS**/**SSL** support to make a sense of real security. At the time of writing I'm using ssl std lib., but if there is a why that I shouldn't use it please tell me.
 
-#Screen-shot
+# Screen-shot
 ![Screenshot1](https://s32.postimg.org/cgvk00mo4/screen_mod.jpg)
 ![Screenshot2](https://s31.postimg.org/j7tnxj4xn/Schermata_da_2016_07_15_00_20_12.png)
 
-#Description
+# Description
 This project aims to administrate a network of compromised hosts, keeping your identity private (thanks to Tor) and your connections secure (thanks to TLS/SSL). For many times botnets get stuck because the main servers became compromised, but this framework will let you keep yours C&C safe and alive (well, this will do its best).
 
 Another _problem_ is that you let unauthorized users to reach your server, even without the cert or whatever. If I now your hostname/IP/whatever I can reach you. But **Tor** has the **solution** (that, as far as I know, clearnet hasn't). I'm referring to [HiddenServiceAuthorizeClient](https://www.torproject.org/docs/tor-manual.html.en#HiddenServiceAuthorizeClient) and [HidServAuth](https://www.torproject.org/docs/tor-manual.html.en#HidServAuth), if you set these properly, see [here](https://www.axs.org/tor/ssh_access_over_Tor.html),
@@ -72,10 +72,10 @@ your Master server will be more stealth than ever and it **won't** suffer ddos a
 So from now on, you'll setup a "_firewall_" between you (Master) and your bots. The new firewall will be just a node from you and your bots, that will filter "legit" client from attackers.
 But for this we all will wait. News are coming, changes are coming.
 
-#Motivation
+# Motivation
 Started looking for one... ended up writing one.
 
-#Requirements
+# Requirements
 * Linux, Mac or Windows (not completely tested tested)
 * Python 2.7
 * [Tor](https://www.torproject.org/) and a HS.
@@ -93,7 +93,7 @@ Started looking for one... ended up writing one.
 * [pywin32](https://sourceforge.net/projects/pywin32/files/) (for Windows hook)
 
 
-#Installation
+# Installation
 * Install Tor and initialize a HS
 * Generate a S.S.C. (Self-Signed-Certificate) with Openssl (you can use the priv key of the HS)
 * Modify the variables of the S.C. as you like (host, port, etc..)
@@ -101,16 +101,16 @@ Started looking for one... ended up writing one.
 * run `pip install -r requirements`
 * Install external (github) dependencies
 
-#Contributors
+# Contributors
 I found a lot of code all over the web, so as soon as possible I'll add the reference to the main authors.
 Last but not least, many people inspired me but citing everyone will crush the net.
 
-#Known Bugs
+# Known Bugs
 - [ ] Progress bar when uploading files, is not so progress
 - [ ] When you execute `FirefoxThief`, from the downloaded data you can extract only the *new* logins. I mean, if the target sync passwd/cookie/etc.. with the Firefox account, you can extract **only** the logins creds since that sync. The old creds can't be extracted (at the time of writing, looking for the solution)
 
-#Abuse
+# Abuse
 I'm **NOT** responsible for damages did by the abuse of this software.
 
-#Contact me
+# Contact me
 You can find me on [Twitter](https://twitter.com/Pielco11) or you can add me on [Ricochet](https://ricochet.im/) `ricochet:325doiiimvg7zvvm`.
