@@ -14,6 +14,8 @@ In windows-client the cert is not required because when you compile and deliver 
 - [x] Reg key (you need to put the file name in the variable)
 
 #News
+* 14/04/17:
+   * Added `evade std sandbox`: thanks to [Markacho](https://stackoverflow.com/questions/165495/detecting-mouse-clicks-in-windows-using-python), now the program will wait for left click and then proceed
 * 12/10/16:
    * Added v3: now you can handle and choose multiple clients
 * 11/10/16:
