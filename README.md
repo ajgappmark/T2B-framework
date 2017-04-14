@@ -1,15 +1,19 @@
 > Merge the power of Python with the anonymity of Tor.
 
 ##Status
-![Build Status](https://travis-ci.org/pielco11/T2B-framework.svg?branch=master)](https://travis-ci.org/pielco11/T2B-framework)
+
+[![Build Status](https://travis-ci.org/pielco11/T2B-framework.svg?branch=master)](https://travis-ci.org/pielco11/T2B-framework)
 
 ##Bugs
+
 Everything is almost under development, so please write to me for any of it
 
 ##Attention 
+
 In windows-client the cert is not required because when you compile and deliver it, it can't extract the cert file because (and at the moment of writing I don't know why) it will run in `C:\Windows\System32` instead of `C:\Path\to\file.exe`.
 
 #TODO
+
 - [ ] Correct change directory 
 - [x] Reg key (you need to put the file name in the variable)
 
